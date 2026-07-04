@@ -39,7 +39,7 @@ jobs:
       - name: Disaster recovery check
         run: python3 scripts/disaster_recovery_check.py
       - name: Export OpenAPI contract
-        run: python3 scripts/export_openapi.py
+        run: PYTHONPATH=backend backend/.venv/bin/python scripts/export_openapi.py
       - name: Generate release evidence metadata
         run: python3 scripts/generate_release_evidence.py --skip-gates
       - name: Production readiness check

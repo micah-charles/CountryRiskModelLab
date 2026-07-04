@@ -170,6 +170,10 @@
       },
       "DatasetPreview": {
         "properties": {
+          "column_count": {
+            "title": "Column Count",
+            "type": "integer"
+          },
           "columns": {
             "items": {
               "type": "string"
@@ -236,6 +240,10 @@
             "title": "Numeric Columns",
             "type": "array"
           },
+          "row_count": {
+            "title": "Row Count",
+            "type": "integer"
+          },
           "rows": {
             "items": {
               "additionalProperties": true,
@@ -260,6 +268,8 @@
           "source_name",
           "frequency",
           "columns",
+          "row_count",
+          "column_count",
           "rows",
           "numeric_columns",
           "date_column",
@@ -574,6 +584,61 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "ImfCountry": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ],
+        "title": "ImfCountry",
+        "type": "object"
+      },
+      "ImfCountryCatalog": {
+        "properties": {
+          "countries": {
+            "items": {
+              "$ref": "#/components/schemas/ImfCountry"
+            },
+            "title": "Countries",
+            "type": "array"
+          },
+          "country_count": {
+            "title": "Country Count",
+            "type": "integer"
+          },
+          "last_modified_utc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Modified Utc"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_url",
+          "country_count",
+          "countries"
+        ],
+        "title": "ImfCountryCatalog",
+        "type": "object"
+      },
       "ImfFetchRequest": {
         "properties": {
           "countries": {
@@ -678,6 +743,79 @@
           "expected_relationship_to_bond_yield"
         ],
         "title": "ImfIndicator",
+        "type": "object"
+      },
+      "ImfPrefetchAllRequest": {
+        "properties": {
+          "end_year": {
+            "default": 2026,
+            "title": "End Year",
+            "type": "integer"
+          },
+          "indicators": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Indicators",
+            "type": "array"
+          },
+          "start_year": {
+            "default": 2010,
+            "title": "Start Year",
+            "type": "integer"
+          }
+        },
+        "title": "ImfPrefetchAllRequest",
+        "type": "object"
+      },
+      "ImfPrefetchedSessionRequest": {
+        "properties": {
+          "countries": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Countries",
+            "type": "array"
+          },
+          "end_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Year"
+          },
+          "indicators": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Indicators",
+            "type": "array"
+          },
+          "source_dataset_id": {
+            "title": "Source Dataset Id",
+            "type": "string"
+          },
+          "start_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Year"
+          }
+        },
+        "required": [
+          "source_dataset_id",
+          "countries"
+        ],
+        "title": "ImfPrefetchedSessionRequest",
         "type": "object"
       },
       "Lesson": {
@@ -911,6 +1049,259 @@
           "approver"
         ],
         "title": "ModelApprovalDecisionRequest",
+        "type": "object"
+      },
+      "ModelReadinessRequest": {
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "date_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date End"
+          },
+          "date_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Start"
+          },
+          "dependent_variable": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependent Variable"
+          },
+          "external_variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "External Variables",
+            "type": "array"
+          },
+          "independent_variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Independent Variables",
+            "type": "array"
+          },
+          "lab_type": {
+            "enum": [
+              "regression",
+              "forecast",
+              "var"
+            ],
+            "title": "Lab Type",
+            "type": "string"
+          },
+          "lag_order": {
+            "default": 1,
+            "title": "Lag Order",
+            "type": "integer"
+          },
+          "model_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Type"
+          },
+          "target_variable": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Variable"
+          },
+          "variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Variables",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "lab_type"
+        ],
+        "title": "ModelReadinessRequest",
+        "type": "object"
+      },
+      "ModelReadinessResponse": {
+        "properties": {
+          "blocking_issues": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Blocking Issues",
+            "type": "array"
+          },
+          "complete_case_count": {
+            "title": "Complete Case Count",
+            "type": "integer"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "date_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Range"
+          },
+          "frequency": {
+            "title": "Frequency",
+            "type": "string"
+          },
+          "lab_type": {
+            "title": "Lab Type",
+            "type": "string"
+          },
+          "missing_columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Columns",
+            "type": "array"
+          },
+          "model_numeric_columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Model Numeric Columns",
+            "type": "array"
+          },
+          "recommendations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Recommendations",
+            "type": "array"
+          },
+          "required_observations": {
+            "title": "Required Observations",
+            "type": "integer"
+          },
+          "run_enabled": {
+            "title": "Run Enabled",
+            "type": "boolean"
+          },
+          "selected_variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Selected Variables",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "warning",
+              "blocked"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "suggested_date_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Date End"
+          },
+          "suggested_date_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Date Start"
+          },
+          "variable_coverage": {
+            "items": {
+              "$ref": "#/components/schemas/VariableCoverage"
+            },
+            "title": "Variable Coverage",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "lab_type",
+          "status",
+          "run_enabled",
+          "frequency",
+          "model_numeric_columns",
+          "selected_variables",
+          "missing_columns",
+          "variable_coverage",
+          "complete_case_count",
+          "required_observations"
+        ],
+        "title": "ModelReadinessResponse",
         "type": "object"
       },
       "RegressionRequest": {
@@ -1357,6 +1748,61 @@
         ],
         "title": "VarResult",
         "type": "object"
+      },
+      "VariableCoverage": {
+        "properties": {
+          "all_missing": {
+            "default": false,
+            "title": "All Missing",
+            "type": "boolean"
+          },
+          "exists": {
+            "title": "Exists",
+            "type": "boolean"
+          },
+          "first_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Date"
+          },
+          "last_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Date"
+          },
+          "non_null_count": {
+            "default": 0,
+            "title": "Non Null Count",
+            "type": "integer"
+          },
+          "selected": {
+            "default": false,
+            "title": "Selected",
+            "type": "boolean"
+          },
+          "variable": {
+            "title": "Variable",
+            "type": "string"
+          }
+        },
+        "required": [
+          "variable",
+          "exists"
+        ],
+        "title": "VariableCoverage",
+        "type": "object"
       }
     }
   },
@@ -1487,6 +1933,17 @@
               "title": "Dataset Id",
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
           }
         ],
         "responses": {
@@ -1601,6 +2058,17 @@
               "title": "Dataset Id",
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
           }
         ],
         "responses": {
@@ -1653,13 +2121,55 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ImfCountry"
+                  },
+                  "title": "Response Imf Countries Api Imf Countries Get",
+                  "type": "array"
+                }
               }
             },
             "description": "Successful Response"
           }
         },
         "summary": "Imf Countries"
+      }
+    },
+    "/api/imf/countries/refresh": {
+      "post": {
+        "operationId": "imf_countries_refresh_api_imf_countries_refresh_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImfCountryCatalog"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Imf Countries Refresh"
+      }
+    },
+    "/api/imf/country-catalog": {
+      "get": {
+        "operationId": "imf_country_catalog_api_imf_country_catalog_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImfCountryCatalog"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Imf Country Catalog"
       }
     },
     "/api/imf/fetch": {
@@ -1720,6 +2230,82 @@
           }
         },
         "summary": "Imf Indicators"
+      }
+    },
+    "/api/imf/prefetch-all-countries": {
+      "post": {
+        "operationId": "imf_prefetch_all_countries_api_imf_prefetch_all_countries_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImfPrefetchAllRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImfFetchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Imf Prefetch All Countries"
+      }
+    },
+    "/api/imf/prefetched-session": {
+      "post": {
+        "operationId": "imf_prefetched_session_api_imf_prefetched_session_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImfPrefetchedSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImfFetchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Imf Prefetched Session"
       }
     },
     "/api/lessons": {
@@ -2005,6 +2591,44 @@
           }
         },
         "summary": "Forecast"
+      }
+    },
+    "/api/models/readiness": {
+      "post": {
+        "operationId": "model_readiness_api_models_readiness_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelReadinessRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelReadinessResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Model Readiness"
       }
     },
     "/api/models/regression/run": {

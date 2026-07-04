@@ -1,0 +1,9 @@
+backend/.venv
+node_modules
+dist
+.pytest_cache
+**/__pycache__
+backend/app/data_registry/audit
+backend/app/data_registry/uploaded/*
+backend/app/data_registry/generated/*
+

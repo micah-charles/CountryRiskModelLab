@@ -1,0 +1,57 @@
+{
+  "NGDP_RPCH": {
+    "platform_variable": "gdp_growth_yoy",
+    "label": "Real GDP Growth",
+    "category": "growth",
+    "frequency": "annual",
+    "description": "Annual percentage change in real GDP.",
+    "typical_country_risk_interpretation": "Lower or negative growth may increase sovereign risk and weaken fiscal resilience.",
+    "expected_relationship_to_bond_yield": "negative"
+  },
+  "PCPIPCH": {
+    "platform_variable": "inflation_yoy",
+    "label": "Inflation",
+    "category": "inflation",
+    "frequency": "annual",
+    "description": "Annual percentage change in consumer prices.",
+    "typical_country_risk_interpretation": "Higher inflation may increase policy tightening risk, FX pressure, and sovereign risk premium.",
+    "expected_relationship_to_bond_yield": "positive"
+  },
+  "GGXWDG_NGDP": {
+    "platform_variable": "debt_gdp",
+    "label": "Government Debt / GDP",
+    "category": "fiscal",
+    "frequency": "annual",
+    "description": "General government gross debt as a percentage of GDP.",
+    "typical_country_risk_interpretation": "Higher debt burden may increase sovereign vulnerability.",
+    "expected_relationship_to_bond_yield": "positive"
+  },
+  "BCA_NGDPD": {
+    "platform_variable": "current_account_gdp",
+    "label": "Current Account Balance / GDP",
+    "category": "external",
+    "frequency": "annual",
+    "description": "Current account balance as a percentage of GDP.",
+    "typical_country_risk_interpretation": "A stronger current account position may reduce external financing risk.",
+    "expected_relationship_to_bond_yield": "negative"
+  },
+  "GGXCNL_NGDP": {
+    "platform_variable": "fiscal_balance_gdp",
+    "label": "Fiscal Balance / GDP",
+    "category": "fiscal",
+    "frequency": "annual",
+    "description": "General government net lending or borrowing as a percentage of GDP.",
+    "typical_country_risk_interpretation": "Larger fiscal deficits may increase borrowing needs and sovereign risk.",
+    "expected_relationship_to_bond_yield": "negative"
+  },
+  "LUR": {
+    "platform_variable": "unemployment_rate",
+    "label": "Unemployment Rate",
+    "category": "labour",
+    "frequency": "annual",
+    "description": "Unemployment rate as a percentage of the labour force.",
+    "typical_country_risk_interpretation": "Higher unemployment may signal weak domestic demand and social pressure.",
+    "expected_relationship_to_bond_yield": "positive"
+  }
+}
+

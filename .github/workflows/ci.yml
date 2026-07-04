@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: npm
+      - name: Install backend dependencies
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/bin/pip install --only-binary=:all: -r backend/app/requirements.txt
+      - name: Backend tests
+        run: PYTHONPATH=backend backend/.venv/bin/pytest backend/app/tests -q
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Frontend build
+        run: npm run build
+      - name: Registry integrity check
+        run: python3 scripts/registry_integrity_check.py
+      - name: SQLite registry migration check
+        run: |
+          tmpdb="$(mktemp -t registry.XXXXXX.sqlite3)"
+          DATASET_REGISTRY_SQLITE_PATH="$tmpdb" python3 scripts/migrate_registry_to_sqlite.py
+          DATASET_REGISTRY_SQLITE_PATH="$tmpdb" python3 scripts/sqlite_registry_check.py
+          rm -f "$tmpdb"
+      - name: Security check
+        run: python3 scripts/security_check.py
+      - name: Disaster recovery check
+        run: python3 scripts/disaster_recovery_check.py
+      - name: Export OpenAPI contract
+        run: python3 scripts/export_openapi.py
+      - name: Generate release evidence metadata
+        run: python3 scripts/generate_release_evidence.py --skip-gates
+      - name: Production readiness check
+        run: python3 scripts/production_readiness_check.py

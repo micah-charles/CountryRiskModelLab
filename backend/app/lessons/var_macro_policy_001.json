@@ -1,0 +1,43 @@
+{
+  "lesson_id": "var_macro_policy_001",
+  "title": "Macro-Policy Interactions with VAR",
+  "level": "intermediate",
+  "module": "var",
+  "analytical_question": "How do inflation, policy rates, FX depreciation, and bond yields interact over time?",
+  "default_dataset_id": "sample_country_risk_quarterly",
+  "default_country": "Turkey",
+  "target_variable": null,
+  "candidate_variables": [
+    "inflation_yoy",
+    "policy_rate",
+    "bond_yield_10y",
+    "fx_depreciation_yoy"
+  ],
+  "learning_objectives": [
+    "Understand why VAR uses multiple variables",
+    "Interpret lag length",
+    "Read simplified impulse response results",
+    "Recognize instability risks in short samples"
+  ],
+  "concepts": [
+    {
+      "name": "VAR",
+      "plain_english": "VAR models several variables together and allows each variable to depend on its own past values and the past values of other variables."
+    },
+    {
+      "name": "Impulse response",
+      "plain_english": "An impulse response traces how a shock to one variable may be followed by movements in other variables."
+    }
+  ],
+  "review_questions": [
+    "Is the lag length reasonable for the frequency?",
+    "Are there enough observations for the number of variables?",
+    "Do the impulse responses make economic sense?"
+  ],
+  "required_outputs": [
+    "VAR forecast",
+    "impulse response interpretation",
+    "limitations note"
+  ]
+}
+

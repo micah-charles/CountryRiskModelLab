@@ -1,0 +1,52 @@
+{
+  "lesson_id": "regression_bond_yield_001",
+  "title": "Explaining Sovereign Bond Yields with Regression",
+  "level": "beginner-intermediate",
+  "module": "regression",
+  "analytical_question": "Which macro-financial indicators help explain 10-year sovereign bond yields?",
+  "default_dataset_id": "sample_country_risk_quarterly",
+  "default_country": "Indonesia",
+  "target_variable": "bond_yield_10y",
+  "candidate_variables": [
+    "inflation_yoy",
+    "policy_rate",
+    "debt_gdp",
+    "current_account_gdp",
+    "fx_depreciation_yoy",
+    "global_risk_index"
+  ],
+  "learning_objectives": [
+    "Understand dependent and independent variables",
+    "Interpret regression coefficients",
+    "Evaluate model fit",
+    "Identify model weaknesses",
+    "Recommend model modifications"
+  ],
+  "concepts": [
+    {
+      "name": "Coefficient",
+      "plain_english": "A coefficient shows how much the target variable changes when one explanatory variable increases by one unit, holding other variables constant."
+    },
+    {
+      "name": "P-value",
+      "plain_english": "A p-value gives a rough indication of whether the observed relationship may be statistically meaningful."
+    },
+    {
+      "name": "R-squared",
+      "plain_english": "R-squared shows how much of the variation in the target variable is explained by the model, but a high value does not guarantee a good country-risk model."
+    }
+  ],
+  "review_questions": [
+    "Do the coefficient signs make economic sense?",
+    "Could any variables be highly correlated with each other?",
+    "Does the model perform worse during stress periods?",
+    "What important country-risk factor is missing from the model?"
+  ],
+  "required_outputs": [
+    "coefficient interpretation",
+    "diagnostic review",
+    "limitations note",
+    "recommended modification"
+  ]
+}
+

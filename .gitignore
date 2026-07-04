@@ -1,0 +1,32 @@
+.DS_Store
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Dependencies and virtual environments
+node_modules/
+.venv/
+backend/.venv/
+
+# Build and test output
+dist/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+
+# Local runtime data registry and generated IMF data
+backend/app/data_registry/registry.json
+backend/app/data_registry/*.sqlite3
+backend/app/data_registry/*.db
+backend/app/data_registry/generated/
+backend/app/data_registry/imf_cache/
+backend/app/data_registry/audit/
+backend/app/data_registry/model_approvals.json
+
+# Generated QA and release evidence
+qa/browser-use/button-qa-report.md
+qa/browser-use/button-qa-results.json
+qa/browser-use/screenshots/
+release_evidence/

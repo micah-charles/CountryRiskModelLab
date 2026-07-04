@@ -1,0 +1,42 @@
+{
+  "lesson_id": "sarimax_bond_yield_001",
+  "title": "Forecasting Bond Yields with SARIMAX",
+  "level": "intermediate",
+  "module": "forecasting",
+  "analytical_question": "Do inflation, policy rates, and global risk improve a bond yield forecast?",
+  "default_dataset_id": "sample_country_risk_monthly",
+  "default_country": "Brazil",
+  "target_variable": "bond_yield_10y",
+  "candidate_variables": [
+    "policy_rate",
+    "inflation_yoy",
+    "global_risk_index"
+  ],
+  "learning_objectives": [
+    "Understand external regressors",
+    "Compare ARIMA and SARIMAX",
+    "Review forecast error",
+    "Connect statistical fit with country-risk judgement"
+  ],
+  "concepts": [
+    {
+      "name": "SARIMAX",
+      "plain_english": "SARIMAX extends ARIMA by adding seasonal patterns and external explanatory variables."
+    },
+    {
+      "name": "External regressor",
+      "plain_english": "An external regressor is another variable that may help explain or forecast the target variable."
+    }
+  ],
+  "review_questions": [
+    "Do the external variables have a sensible economic role?",
+    "Could future values of external variables be known in practice?",
+    "Does better AIC translate into a better analyst story?"
+  ],
+  "required_outputs": [
+    "forecast comparison",
+    "external variable explanation",
+    "model weakness note"
+  ]
+}
+

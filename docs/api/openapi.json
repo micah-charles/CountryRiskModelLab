@@ -1,0 +1,2127 @@
+{
+  "components": {
+    "schemas": {
+      "Body_upload_dataset_api_datasets_upload_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_dataset_api_datasets_upload_post",
+        "type": "object"
+      },
+      "CoefficientResult": {
+        "properties": {
+          "coefficient": {
+            "title": "Coefficient",
+            "type": "number"
+          },
+          "interpretation": {
+            "title": "Interpretation",
+            "type": "string"
+          },
+          "p_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P Value"
+          },
+          "std_error": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Std Error"
+          },
+          "variable": {
+            "title": "Variable",
+            "type": "string"
+          }
+        },
+        "required": [
+          "variable",
+          "coefficient",
+          "interpretation"
+        ],
+        "title": "CoefficientResult",
+        "type": "object"
+      },
+      "DatasetMetadata": {
+        "properties": {
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "countries": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Countries",
+            "type": "array"
+          },
+          "country_column": {
+            "default": "country",
+            "title": "Country Column",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "date_column": {
+            "default": "date",
+            "title": "Date Column",
+            "type": "string"
+          },
+          "date_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Range"
+          },
+          "file_path": {
+            "title": "File Path",
+            "type": "string"
+          },
+          "frequency": {
+            "enum": [
+              "monthly",
+              "quarterly",
+              "annual",
+              "unknown"
+            ],
+            "title": "Frequency",
+            "type": "string"
+          },
+          "metadata_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata Path"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "source_name": {
+            "title": "Source Name",
+            "type": "string"
+          },
+          "source_type": {
+            "enum": [
+              "sample",
+              "upload",
+              "imf_api"
+            ],
+            "title": "Source Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "name",
+          "source_type",
+          "source_name",
+          "created_at",
+          "frequency",
+          "columns",
+          "file_path"
+        ],
+        "title": "DatasetMetadata",
+        "type": "object"
+      },
+      "DatasetPreview": {
+        "properties": {
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "countries": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Countries",
+            "type": "array"
+          },
+          "country_column": {
+            "title": "Country Column",
+            "type": "string"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "date_column": {
+            "title": "Date Column",
+            "type": "string"
+          },
+          "date_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Range"
+          },
+          "frequency": {
+            "title": "Frequency",
+            "type": "string"
+          },
+          "missing_values": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Missing Values",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "numeric_columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Numeric Columns",
+            "type": "array"
+          },
+          "rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "source_name": {
+            "title": "Source Name",
+            "type": "string"
+          },
+          "source_type": {
+            "title": "Source Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "name",
+          "source_type",
+          "source_name",
+          "frequency",
+          "columns",
+          "rows",
+          "numeric_columns",
+          "date_column",
+          "country_column",
+          "missing_values",
+          "countries"
+        ],
+        "title": "DatasetPreview",
+        "type": "object"
+      },
+      "ForecastRequest": {
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "date_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date End"
+          },
+          "date_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Start"
+          },
+          "external_variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "External Variables",
+            "type": "array"
+          },
+          "forecast_horizon": {
+            "default": 8,
+            "title": "Forecast Horizon",
+            "type": "integer"
+          },
+          "intended_use": {
+            "default": "learning",
+            "title": "Intended Use",
+            "type": "string"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Id"
+          },
+          "model_type": {
+            "default": "ARIMA",
+            "enum": [
+              "ARIMA",
+              "SARIMA",
+              "SARIMAX",
+              "AUTO_ARIMA"
+            ],
+            "title": "Model Type",
+            "type": "string"
+          },
+          "order": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Order",
+            "type": "array"
+          },
+          "seasonal_order": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Seasonal Order",
+            "type": "array"
+          },
+          "target_variable": {
+            "title": "Target Variable",
+            "type": "string"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/ForecastValidation"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "target_variable"
+        ],
+        "title": "ForecastRequest",
+        "type": "object"
+      },
+      "ForecastResult": {
+        "properties": {
+          "aic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aic"
+          },
+          "bic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bic"
+          },
+          "dataset": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DatasetMetadata"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fitted_values": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Fitted Values",
+            "type": "array"
+          },
+          "forecast": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Forecast",
+            "type": "array"
+          },
+          "mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mae"
+          },
+          "model_candidates": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Model Candidates",
+            "type": "array"
+          },
+          "model_governance": {
+            "additionalProperties": true,
+            "title": "Model Governance",
+            "type": "object"
+          },
+          "model_type": {
+            "title": "Model Type",
+            "type": "string"
+          },
+          "order": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Order",
+            "type": "array"
+          },
+          "python_code": {
+            "title": "Python Code",
+            "type": "string"
+          },
+          "residuals": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Residuals",
+            "type": "array"
+          },
+          "rmse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rmse"
+          },
+          "seasonal_order": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Seasonal Order",
+            "type": "array"
+          },
+          "strengths": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Strengths",
+            "type": "array"
+          },
+          "suggested_modifications": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Suggested Modifications",
+            "type": "array"
+          },
+          "target_variable": {
+            "title": "Target Variable",
+            "type": "string"
+          },
+          "weaknesses": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Weaknesses",
+            "type": "array"
+          }
+        },
+        "required": [
+          "model_type",
+          "target_variable",
+          "order",
+          "seasonal_order",
+          "forecast",
+          "fitted_values",
+          "residuals",
+          "strengths",
+          "weaknesses",
+          "suggested_modifications",
+          "python_code"
+        ],
+        "title": "ForecastResult",
+        "type": "object"
+      },
+      "ForecastValidation": {
+        "properties": {
+          "test_size": {
+            "default": 0.2,
+            "title": "Test Size",
+            "type": "number"
+          },
+          "train_test_split": {
+            "default": true,
+            "title": "Train Test Split",
+            "type": "boolean"
+          }
+        },
+        "title": "ForecastValidation",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "ImfFetchRequest": {
+        "properties": {
+          "countries": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Countries",
+            "type": "array"
+          },
+          "end_year": {
+            "default": 2026,
+            "title": "End Year",
+            "type": "integer"
+          },
+          "indicators": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Indicators",
+            "type": "array"
+          },
+          "start_year": {
+            "default": 2010,
+            "title": "Start Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "countries",
+          "indicators"
+        ],
+        "title": "ImfFetchRequest",
+        "type": "object"
+      },
+      "ImfFetchResponse": {
+        "properties": {
+          "dataset": {
+            "$ref": "#/components/schemas/DatasetMetadata"
+          },
+          "preview": {
+            "$ref": "#/components/schemas/DatasetPreview"
+          },
+          "progress_states": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Progress States",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dataset",
+          "preview",
+          "progress_states"
+        ],
+        "title": "ImfFetchResponse",
+        "type": "object"
+      },
+      "ImfIndicator": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "expected_relationship_to_bond_yield": {
+            "title": "Expected Relationship To Bond Yield",
+            "type": "string"
+          },
+          "frequency": {
+            "title": "Frequency",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "platform_variable": {
+            "title": "Platform Variable",
+            "type": "string"
+          },
+          "typical_country_risk_interpretation": {
+            "title": "Typical Country Risk Interpretation",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "platform_variable",
+          "label",
+          "category",
+          "frequency",
+          "description",
+          "typical_country_risk_interpretation",
+          "expected_relationship_to_bond_yield"
+        ],
+        "title": "ImfIndicator",
+        "type": "object"
+      },
+      "Lesson": {
+        "properties": {
+          "analytical_question": {
+            "title": "Analytical Question",
+            "type": "string"
+          },
+          "candidate_variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Candidate Variables",
+            "type": "array"
+          },
+          "concepts": {
+            "items": {
+              "$ref": "#/components/schemas/LessonConcept"
+            },
+            "title": "Concepts",
+            "type": "array"
+          },
+          "default_country": {
+            "title": "Default Country",
+            "type": "string"
+          },
+          "default_dataset_id": {
+            "title": "Default Dataset Id",
+            "type": "string"
+          },
+          "learning_objectives": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Learning Objectives",
+            "type": "array"
+          },
+          "lesson_id": {
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "string"
+          },
+          "module": {
+            "title": "Module",
+            "type": "string"
+          },
+          "required_outputs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Outputs",
+            "type": "array"
+          },
+          "review_questions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Review Questions",
+            "type": "array"
+          },
+          "target_variable": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Variable"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "lesson_id",
+          "title",
+          "level",
+          "module",
+          "analytical_question",
+          "default_dataset_id",
+          "default_country",
+          "candidate_variables",
+          "learning_objectives",
+          "concepts",
+          "review_questions",
+          "required_outputs"
+        ],
+        "title": "Lesson",
+        "type": "object"
+      },
+      "LessonConcept": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "plain_english": {
+            "title": "Plain English",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "plain_english"
+        ],
+        "title": "LessonConcept",
+        "type": "object"
+      },
+      "MemoRequest": {
+        "properties": {
+          "analytical_question": {
+            "default": "What does this model teach us about country risk?",
+            "title": "Analytical Question",
+            "type": "string"
+          },
+          "final_analyst_judgement": {
+            "default": "Use this model as a learning aid and validate conclusions with economic judgement.",
+            "title": "Final Analyst Judgement",
+            "type": "string"
+          },
+          "model_result": {
+            "additionalProperties": true,
+            "title": "Model Result",
+            "type": "object"
+          },
+          "user_notes": {
+            "default": "",
+            "title": "User Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model_result"
+        ],
+        "title": "MemoRequest",
+        "type": "object"
+      },
+      "MemoResponse": {
+        "properties": {
+          "markdown": {
+            "title": "Markdown",
+            "type": "string"
+          }
+        },
+        "required": [
+          "markdown"
+        ],
+        "title": "MemoResponse",
+        "type": "object"
+      },
+      "ModelApprovalCreateRequest": {
+        "properties": {
+          "evidence_uri": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Uri"
+          },
+          "intended_use": {
+            "title": "Intended Use",
+            "type": "string"
+          },
+          "justification": {
+            "title": "Justification",
+            "type": "string"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "requester": {
+            "title": "Requester",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model_id",
+          "intended_use",
+          "requester",
+          "justification"
+        ],
+        "title": "ModelApprovalCreateRequest",
+        "type": "object"
+      },
+      "ModelApprovalDecisionRequest": {
+        "properties": {
+          "approver": {
+            "title": "Approver",
+            "type": "string"
+          },
+          "conditions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Conditions",
+            "type": "array"
+          },
+          "decision": {
+            "enum": [
+              "approved",
+              "rejected"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          }
+        },
+        "required": [
+          "decision",
+          "approver"
+        ],
+        "title": "ModelApprovalDecisionRequest",
+        "type": "object"
+      },
+      "RegressionRequest": {
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "date_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date End"
+          },
+          "date_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Start"
+          },
+          "dependent_variable": {
+            "title": "Dependent Variable",
+            "type": "string"
+          },
+          "independent_variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Independent Variables",
+            "type": "array"
+          },
+          "intended_use": {
+            "default": "learning",
+            "title": "Intended Use",
+            "type": "string"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Id"
+          },
+          "transformations": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Transformations",
+            "type": "object"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/RegressionValidation"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "dependent_variable",
+          "independent_variables"
+        ],
+        "title": "RegressionRequest",
+        "type": "object"
+      },
+      "RegressionResult": {
+        "properties": {
+          "adjusted_r_squared": {
+            "title": "Adjusted R Squared",
+            "type": "number"
+          },
+          "charts": {
+            "additionalProperties": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "title": "Charts",
+            "type": "object"
+          },
+          "coefficients": {
+            "items": {
+              "$ref": "#/components/schemas/CoefficientResult"
+            },
+            "title": "Coefficients",
+            "type": "array"
+          },
+          "dataset": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DatasetMetadata"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dependent_variable": {
+            "title": "Dependent Variable",
+            "type": "string"
+          },
+          "diagnostics": {
+            "additionalProperties": true,
+            "title": "Diagnostics",
+            "type": "object"
+          },
+          "independent_variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Independent Variables",
+            "type": "array"
+          },
+          "model_governance": {
+            "additionalProperties": true,
+            "title": "Model Governance",
+            "type": "object"
+          },
+          "model_type": {
+            "default": "OLS Regression",
+            "title": "Model Type",
+            "type": "string"
+          },
+          "n_observations": {
+            "title": "N Observations",
+            "type": "integer"
+          },
+          "python_code": {
+            "title": "Python Code",
+            "type": "string"
+          },
+          "r_squared": {
+            "title": "R Squared",
+            "type": "number"
+          },
+          "strengths": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Strengths",
+            "type": "array"
+          },
+          "suggested_modifications": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Suggested Modifications",
+            "type": "array"
+          },
+          "weaknesses": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Weaknesses",
+            "type": "array"
+          }
+        },
+        "required": [
+          "n_observations",
+          "dependent_variable",
+          "independent_variables",
+          "r_squared",
+          "adjusted_r_squared",
+          "coefficients",
+          "diagnostics",
+          "charts",
+          "strengths",
+          "weaknesses",
+          "suggested_modifications",
+          "python_code"
+        ],
+        "title": "RegressionResult",
+        "type": "object"
+      },
+      "RegressionValidation": {
+        "properties": {
+          "test_size": {
+            "default": 0.2,
+            "title": "Test Size",
+            "type": "number"
+          },
+          "train_test_split": {
+            "default": false,
+            "title": "Train Test Split",
+            "type": "boolean"
+          }
+        },
+        "title": "RegressionValidation",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "VarRequest": {
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "date_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date End"
+          },
+          "date_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Start"
+          },
+          "forecast_horizon": {
+            "default": 8,
+            "title": "Forecast Horizon",
+            "type": "integer"
+          },
+          "intended_use": {
+            "default": "learning",
+            "title": "Intended Use",
+            "type": "string"
+          },
+          "lag_order": {
+            "default": 1,
+            "title": "Lag Order",
+            "type": "integer"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Id"
+          },
+          "variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Variables",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "variables"
+        ],
+        "title": "VarRequest",
+        "type": "object"
+      },
+      "VarResult": {
+        "properties": {
+          "aic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aic"
+          },
+          "bic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bic"
+          },
+          "dataset": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DatasetMetadata"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "forecast": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Forecast",
+            "type": "array"
+          },
+          "impulse_response": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Impulse Response",
+            "type": "array"
+          },
+          "lag_order": {
+            "title": "Lag Order",
+            "type": "integer"
+          },
+          "model_governance": {
+            "additionalProperties": true,
+            "title": "Model Governance",
+            "type": "object"
+          },
+          "model_type": {
+            "default": "VAR",
+            "title": "Model Type",
+            "type": "string"
+          },
+          "python_code": {
+            "title": "Python Code",
+            "type": "string"
+          },
+          "strengths": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Strengths",
+            "type": "array"
+          },
+          "suggested_modifications": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Suggested Modifications",
+            "type": "array"
+          },
+          "variables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Variables",
+            "type": "array"
+          },
+          "weaknesses": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Weaknesses",
+            "type": "array"
+          }
+        },
+        "required": [
+          "variables",
+          "lag_order",
+          "forecast",
+          "impulse_response",
+          "strengths",
+          "weaknesses",
+          "suggested_modifications",
+          "python_code"
+        ],
+        "title": "VarResult",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Country Risk Statistical Model Lab",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/audit/events": {
+      "get": {
+        "operationId": "audit_events_api_audit_events_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response Audit Events Api Audit Events Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Audit Events"
+      }
+    },
+    "/api/audit/verify": {
+      "get": {
+        "operationId": "audit_verify_api_audit_verify_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Audit Verify Api Audit Verify Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Audit Verify"
+      }
+    },
+    "/api/datasets": {
+      "get": {
+        "operationId": "datasets_api_datasets_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DatasetMetadata"
+                  },
+                  "title": "Response Datasets Api Datasets Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Datasets"
+      }
+    },
+    "/api/datasets/samples": {
+      "get": {
+        "operationId": "samples_api_datasets_samples_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DatasetMetadata"
+                  },
+                  "title": "Response Samples Api Datasets Samples Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Samples"
+      }
+    },
+    "/api/datasets/samples/{dataset_id}/preview": {
+      "get": {
+        "operationId": "sample_dataset_preview_api_datasets_samples__dataset_id__preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "title": "Dataset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sample Dataset Preview"
+      }
+    },
+    "/api/datasets/upload": {
+      "post": {
+        "operationId": "upload_dataset_api_datasets_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_dataset_api_datasets_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Dataset"
+      }
+    },
+    "/api/datasets/{dataset_id}/csv": {
+      "get": {
+        "operationId": "dataset_csv_api_datasets__dataset_id__csv_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "title": "Dataset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dataset Csv"
+      }
+    },
+    "/api/datasets/{dataset_id}/preview": {
+      "get": {
+        "operationId": "dataset_preview_api_datasets__dataset_id__preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "title": "Dataset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dataset Preview"
+      }
+    },
+    "/api/health": {
+      "get": {
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/api/imf/countries": {
+      "get": {
+        "operationId": "imf_countries_api_imf_countries_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Imf Countries"
+      }
+    },
+    "/api/imf/fetch": {
+      "post": {
+        "operationId": "imf_fetch_api_imf_fetch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImfFetchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImfFetchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Imf Fetch"
+      }
+    },
+    "/api/imf/indicators": {
+      "get": {
+        "operationId": "imf_indicators_api_imf_indicators_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ImfIndicator"
+                  },
+                  "title": "Response Imf Indicators Api Imf Indicators Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Imf Indicators"
+      }
+    },
+    "/api/lessons": {
+      "get": {
+        "operationId": "lessons_api_lessons_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Lesson"
+                  },
+                  "title": "Response Lessons Api Lessons Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Lessons"
+      }
+    },
+    "/api/lessons/{lesson_id}": {
+      "get": {
+        "operationId": "lesson_api_lessons__lesson_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lesson_id",
+            "required": true,
+            "schema": {
+              "title": "Lesson Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Lesson"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lesson"
+      }
+    },
+    "/api/memo/generate": {
+      "post": {
+        "operationId": "memo_api_memo_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Memo"
+      }
+    },
+    "/api/metrics": {
+      "get": {
+        "operationId": "metrics_api_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Metrics"
+      }
+    },
+    "/api/model-governance/approvals": {
+      "get": {
+        "operationId": "model_governance_approvals_api_model_governance_approvals_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response Model Governance Approvals Api Model Governance Approvals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Model Governance Approvals"
+      },
+      "post": {
+        "operationId": "model_governance_submit_approval_api_model_governance_approvals_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelApprovalCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Model Governance Submit Approval Api Model Governance Approvals Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Model Governance Submit Approval"
+      }
+    },
+    "/api/model-governance/approvals/{approval_id}/decision": {
+      "post": {
+        "operationId": "model_governance_decide_approval_api_model_governance_approvals__approval_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "approval_id",
+            "required": true,
+            "schema": {
+              "title": "Approval Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelApprovalDecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Model Governance Decide Approval Api Model Governance Approvals  Approval Id  Decision Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Model Governance Decide Approval"
+      }
+    },
+    "/api/model-governance/catalog": {
+      "get": {
+        "operationId": "model_governance_catalog_api_model_governance_catalog_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Model Governance Catalog Api Model Governance Catalog Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Model Governance Catalog"
+      }
+    },
+    "/api/models/forecast/run": {
+      "post": {
+        "operationId": "forecast_api_models_forecast_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForecastRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Forecast"
+      }
+    },
+    "/api/models/regression/run": {
+      "post": {
+        "operationId": "regression_api_models_regression_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegressionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegressionResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Regression"
+      }
+    },
+    "/api/models/var/run": {
+      "post": {
+        "operationId": "var_model_api_models_var_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VarRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VarResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Var Model"
+      }
+    },
+    "/api/ready": {
+      "get": {
+        "operationId": "ready_api_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Ready Api Ready Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ready"
+      }
+    },
+    "/api/version": {
+      "get": {
+        "operationId": "version_api_version_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Version Api Version Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Version"
+      }
+    }
+  }
+}

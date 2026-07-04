@@ -1,0 +1,40 @@
+{
+  "lesson_id": "forecasting_inflation_001",
+  "title": "Forecasting Inflation with ARIMA",
+  "level": "beginner",
+  "module": "forecasting",
+  "analytical_question": "Can past inflation help produce a transparent baseline inflation forecast?",
+  "default_dataset_id": "sample_country_risk_monthly",
+  "default_country": "Indonesia",
+  "target_variable": "inflation_yoy",
+  "candidate_variables": [
+    "inflation_yoy"
+  ],
+  "learning_objectives": [
+    "Understand ARIMA terms",
+    "Interpret forecast intervals",
+    "Compare fit statistics",
+    "Explain why automatic model selection still needs judgement"
+  ],
+  "concepts": [
+    {
+      "name": "ARIMA",
+      "plain_english": "ARIMA forecasts one variable using its own past values, differencing, and past forecast errors."
+    },
+    {
+      "name": "Forecast interval",
+      "plain_english": "A forecast interval shows a range of plausible outcomes, not a guarantee."
+    }
+  ],
+  "review_questions": [
+    "Does the forecast react too slowly to shocks?",
+    "Could structural breaks make the model unreliable?",
+    "Is the forecast economically plausible?"
+  ],
+  "required_outputs": [
+    "forecast chart",
+    "AIC/BIC review",
+    "forecast limitation note"
+  ]
+}
+

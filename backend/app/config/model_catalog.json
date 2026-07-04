@@ -1,0 +1,45 @@
+{
+  "ols_country_risk_learning_v1": {
+    "model_type": "OLS Regression",
+    "status": "approved_for_learning",
+    "owner": "Chief Economist Office",
+    "validator": "Model Risk Review Required Before Decision Use",
+    "allowed_uses": ["learning", "uat"],
+    "prohibited_uses": ["trading", "credit_decisioning", "regulatory_capital", "external_publication"],
+    "methodology": "statsmodels OLS regression for educational country-risk analysis.",
+    "limitations": [
+      "Associational model, not causal proof.",
+      "Sensitive to omitted variables, multicollinearity, sample period, and structural breaks.",
+      "Not validated for live credit, trading, capital, or client-facing decisions."
+    ]
+  },
+  "sarimax_country_risk_learning_v1": {
+    "model_type": "ARIMA/SARIMA/SARIMAX Forecasting",
+    "status": "approved_for_learning",
+    "owner": "Chief Economist Office",
+    "validator": "Model Risk Review Required Before Decision Use",
+    "allowed_uses": ["learning", "uat"],
+    "prohibited_uses": ["trading", "credit_decisioning", "regulatory_capital", "external_publication"],
+    "methodology": "statsmodels SARIMAX for educational time-series forecasting.",
+    "limitations": [
+      "Forecasts can be unstable around crisis periods and structural breaks.",
+      "Auto ARIMA is a small educational grid search, not a full professional model-selection engine.",
+      "External regressor future values are assumed from recent values in the MVP."
+    ]
+  },
+  "var_country_risk_learning_v1": {
+    "model_type": "VAR",
+    "status": "approved_for_learning",
+    "owner": "Chief Economist Office",
+    "validator": "Model Risk Review Required Before Decision Use",
+    "allowed_uses": ["learning", "uat"],
+    "prohibited_uses": ["trading", "credit_decisioning", "regulatory_capital", "external_publication"],
+    "methodology": "statsmodels VAR for educational macro-financial interaction analysis.",
+    "limitations": [
+      "Requires enough observations for selected variables and lag order.",
+      "Sensitive to stationarity, lag choice, and sample period.",
+      "Impulse responses are learning aids and require economic interpretation."
+    ]
+  }
+}
+

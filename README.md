@@ -51,6 +51,8 @@ The IMF country catalogue is stored locally at `backend/app/config/imf_country_c
 PYTHONPATH=backend backend/.venv/bin/python scripts/refresh_imf_country_catalog.py
 ```
 
+The repo also includes a portable static IMF annual macro seed at `backend/app/data/imf_all_countries_2010_2026.csv`. On startup it registers as dataset `imf_all_countries_2010_2026`, covering all 239 labelled IMF DataMapper countries in the bundled catalogue for 2010-2026.
+
 Operators can also prefetch macro data for every country in the static IMF catalogue:
 
 ```bash

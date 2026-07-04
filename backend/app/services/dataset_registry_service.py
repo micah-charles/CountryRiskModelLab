@@ -161,6 +161,7 @@ def metadata_from_csv(
     country_column: str = "country",
     date_column: str = "date",
     notes: list[str] | None = None,
+    created_at: str | None = None,
 ) -> DatasetMetadata:
     df = pd.read_csv(file_path)
     countries = sorted(df[country_column].dropna().astype(str).unique().tolist()) if country_column in df.columns else []
@@ -169,7 +170,7 @@ def metadata_from_csv(
         name=name,
         source_type=source_type,  # type: ignore[arg-type]
         source_name=source_name,
-        created_at=utc_now(),
+        created_at=created_at or utc_now(),
         frequency=detect_frequency(df[date_column]) if date_column in df.columns else "unknown",
         country_column=country_column,
         date_column=date_column,
@@ -185,20 +186,50 @@ def metadata_from_csv(
 def register_sample_datasets() -> None:
     existing = {item.dataset_id for item in read_registry()}
     samples = [
-        (
-            "sample_country_risk_quarterly",
-            "Sample Country Risk Quarterly Dataset",
-            DATA_DIR / "sample_country_risk_quarterly.csv",
-        ),
-        (
-            "sample_country_risk_monthly",
-            "Sample Country Risk Monthly Dataset",
-            DATA_DIR / "sample_country_risk_monthly.csv",
-        ),
+        {
+            "dataset_id": "sample_country_risk_quarterly",
+            "name": "Sample Country Risk Quarterly Dataset",
+            "source_type": "sample",
+            "source_name": "Synthetic sample data",
+            "path": DATA_DIR / "sample_country_risk_quarterly.csv",
+        },
+        {
+            "dataset_id": "sample_country_risk_monthly",
+            "name": "Sample Country Risk Monthly Dataset",
+            "source_type": "sample",
+            "source_name": "Synthetic sample data",
+            "path": DATA_DIR / "sample_country_risk_monthly.csv",
+        },
+        {
+            "dataset_id": "imf_all_countries_2010_2026",
+            "name": "IMF Static - All Countries, Annual Macro (2010-2026)",
+            "source_type": "imf_api",
+            "source_name": "IMF DataMapper static seed",
+            "path": DATA_DIR / "imf_all_countries_2010_2026.csv",
+            "created_at": "2026-07-04T14:44:41Z",
+            "notes": [
+                "Static seed generated from IMF DataMapper on 2026-07-04.",
+                "Country catalogue last modified: 2026-07-04T14:28:10Z.",
+                "This dataset covers all 239 labelled IMF DataMapper countries in the bundled catalogue for 2010-2026.",
+                "Refresh live IMF data with scripts/prefetch_imf_all_countries_dataset.py when an updated runtime dataset is needed.",
+            ],
+        },
     ]
-    for dataset_id, name, path in samples:
+    for dataset in samples:
+        dataset_id = dataset["dataset_id"]
+        path = dataset["path"]
         if path.exists() and dataset_id not in existing:
-            upsert_dataset(metadata_from_csv(dataset_id, name, "sample", "Synthetic sample data", path))
+            upsert_dataset(
+                metadata_from_csv(
+                    dataset_id,
+                    dataset["name"],
+                    dataset["source_type"],
+                    dataset["source_name"],
+                    path,
+                    notes=dataset.get("notes"),
+                    created_at=dataset.get("created_at"),
+                )
+            )
 
 
 def list_datasets(source_type: str | None = None) -> list[DatasetMetadata]:

@@ -41,6 +41,7 @@ KEY_FILES = [
     "backend/app/middleware.py",
     "backend/app/services/rbac_service.py",
     "backend/app/config/model_catalog.json",
+    "backend/app/data/imf_all_countries_2010_2026.csv",
     "backend/app/data_registry/registry.json",
     "docs/ARCHITECTURE.md",
     "docs/CONTROLS_MATRIX.md",

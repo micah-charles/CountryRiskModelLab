@@ -22,6 +22,7 @@ REQUIRED_FILES = [
     "qa/manual-test-checklist.md",
     "backend/app/config/settings.py",
     "backend/app/config/imf_country_catalog.json",
+    "backend/app/data/imf_all_countries_2010_2026.csv",
     "backend/app/middleware.py",
     "backend/app/services/audit_service.py",
     "backend/app/services/auth_service.py",

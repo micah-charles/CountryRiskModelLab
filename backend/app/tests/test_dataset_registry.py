@@ -15,6 +15,20 @@ def test_sample_dataset_has_required_country_risk_columns():
     assert {"country", "date", "bond_yield_10y", "inflation_yoy", "policy_rate"}.issubset(df.columns)
 
 
+def test_static_imf_seed_dataset_loads():
+    register_sample_datasets()
+    datasets = list_datasets("imf_api")
+    ids = {dataset.dataset_id for dataset in datasets}
+    assert "imf_all_countries_2010_2026" in ids
+
+    metadata, df = load_dataset("imf_all_countries_2010_2026")
+    assert metadata.frequency == "annual"
+    assert metadata.date_range == "2010 to 2026"
+    assert df["country_code"].nunique() == 239
+    assert len(df) == 239 * 17
+    assert {"gdp_growth_yoy", "inflation_yoy", "debt_gdp", "unemployment_rate"}.issubset(df.columns)
+
+
 def test_sqlite_registry_backend_reads_and_writes(monkeypatch, tmp_path):
     monkeypatch.setenv("DATASET_REGISTRY_BACKEND", "sqlite")
     monkeypatch.setenv("DATASET_REGISTRY_SQLITE_PATH", str(tmp_path / "registry.sqlite3"))

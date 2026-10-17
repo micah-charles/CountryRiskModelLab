@@ -33,7 +33,7 @@ flowchart LR
 - Environment-driven settings live in `backend/app/config/settings.py`.
 - Optional API key authentication is enforced when `API_AUTH_REQUIRED=true`.
 - Authentication can run in `api_key`, `jwt`, `oidc_jwks`, or `api_key_or_jwt` mode. JWT mode validates HS256 gateway-signed bearer tokens; OIDC/JWKS mode validates RS256 tokens from a bank identity provider or API gateway.
-- RBAC enforcement protects sensitive dataset, model, audit, and governance endpoints using roles from token claims or trusted gateway headers.
+- RBAC enforcement protects sensitive dataset, model, audit, and governance endpoints using roles from validated token claims when API authentication is enabled. Header-based role simulation is restricted to unauthenticated development/test/local environments. API keys authenticate without granting application roles.
 - Security headers and request IDs are applied by `backend/app/middleware.py`.
 - Audit events are written as JSONL through `backend/app/services/audit_service.py`.
 - Audit events include a SHA-256 hash chain for tamper-evidence and can be verified through `/api/audit/verify`.

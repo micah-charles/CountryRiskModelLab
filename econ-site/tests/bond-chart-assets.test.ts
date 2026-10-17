@@ -46,6 +46,9 @@ test("renders five preset image bundles with version-and-content-addressed keys"
     assert.match(base.svg, /Retrieved 2026-10-17T12:00:00Z/);
     assert.match(base.svg, /Missing observations remain blank/);
     assert.match(base.svg, /1920/);
+    assert.match(base.svg, /stroke-dasharray="7 8"/);
+    assert.match(base.svg, />0%<\/text>/);
+    assert.match(base.svg, />4%<\/text>/);
     assert.match(us.svg, /<path d="M/);
     assert.match(uk.svg, /<path d="M/);
   }

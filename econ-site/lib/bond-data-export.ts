@@ -1,16 +1,28 @@
 import { strToU8, zipSync } from "fflate";
-import { BOND_CHART_PRESETS } from "./bond-chart-assets.ts";
+import { BOND_CHART_PRESETS } from "./bond-chart-logic.ts";
+import { resolveBondPeriodBounds, type BondDateGrid, type BondPeriodMode } from "./bond-chart-logic.ts";
 import { BOND_COUNTRIES, type BondSnapshot, type CountryKey, type SourceDetails, type YieldPoint } from "../app/data/catalog.ts";
 
 export type BondExportPeriod = "full" | (typeof BOND_CHART_PRESETS)[number]["key"];
 export type BondExportContext = { version: number; snapshotSha256: string; createdAt: string };
 
-export function prepareBondExport(snapshot: BondSnapshot, context: BondExportContext, period: BondExportPeriod) {
+export type BondExportOptions = { periodMode?: BondPeriodMode; dateGrid?: BondDateGrid; countries?: CountryKey[] };
+
+export function prepareBondExport(snapshot: BondSnapshot, context: BondExportContext, period: BondExportPeriod, options: BondExportOptions = {}) {
   const allDates = Object.values(snapshot.series).flatMap((rows) => (rows ?? []).map((row) => row.date)).sort();
   if (!allDates.length) throw new Error("The selected snapshot contains no bond observations.");
   const endDate = allDates.at(-1)!;
-  const startDate = period === "full" ? snapshot.periodStart : periodStart(period, endDate);
-  const countries = BOND_COUNTRIES.map(({ key }) => key).filter((key) => Array.isArray(snapshot.series[key]) && snapshot.series[key]!.length > 0);
+  const bounds = period === "full"
+    ? { startDate: snapshot.periodStart, endDate, mode: "fixed" as const }
+    : resolveBondPeriodBounds(period, options.periodMode ?? "rolling", endDate);
+  const startDate = bounds.startDate;
+  const available = BOND_COUNTRIES.map(({ key }) => key).filter((key) => Array.isArray(snapshot.series[key]) && snapshot.series[key]!.length > 0);
+  const requested = options.countries;
+  if (requested && (new Set(requested).size !== requested.length || requested.some((key) => !available.includes(key)))) {
+    throw new Error("Selected chart countries must be unique and available in this snapshot.");
+  }
+  const countries = requested ? BOND_COUNTRIES.map(({ key }) => key).filter((key) => requested.includes(key) && available.includes(key)) : available;
+  if (!countries.length) throw new Error("Choose at least one country available in this snapshot.");
   const series = Object.fromEntries(countries.map((country) => [country, snapshot.series[country]!.filter((row) => row.date >= startDate && row.date <= endDate)])) as Partial<Record<CountryKey, YieldPoint[]>>;
   const dates = [...new Set(Object.values(series).flatMap((rows) => rows?.map((row) => row.date) ?? []))].sort();
   const valuesByCountry = new Map<CountryKey, Map<string, number | null>>();
@@ -25,6 +37,8 @@ export function prepareBondExport(snapshot: BondSnapshot, context: BondExportCon
     snapshotCreatedAt: context.createdAt,
     retrievedAt: snapshot.retrievedAt,
     period,
+    periodMode: bounds.mode,
+    dateGrid: options.dateGrid ?? "quarterly",
     periodStart: startDate,
     periodEnd: endDate,
     operatorSelectedPurpose: snapshot.operatorSelectedPurpose ?? null,
@@ -40,8 +54,8 @@ export function prepareBondExport(snapshot: BondSnapshot, context: BondExportCon
   return { period, startDate, endDate, countries, dates, series, valuesByCountry, metadata };
 }
 
-export function bondExportJson(snapshot: BondSnapshot, context: BondExportContext, period: BondExportPeriod) {
-  const prepared = prepareBondExport(snapshot, context, period);
+export function bondExportJson(snapshot: BondSnapshot, context: BondExportContext, period: BondExportPeriod, options: BondExportOptions = {}) {
+  const prepared = prepareBondExport(snapshot, context, period, options);
   const exportObject = {
     ...prepared.metadata,
     restrictedCountries: snapshot.restrictedCountries ?? [],
@@ -51,14 +65,14 @@ export function bondExportJson(snapshot: BondSnapshot, context: BondExportContex
   return JSON.stringify(exportObject, null, 2);
 }
 
-export function bondExportCsv(snapshot: BondSnapshot, context: BondExportContext, period: BondExportPeriod) {
-  const prepared = prepareBondExport(snapshot, context, period);
+export function bondExportCsv(snapshot: BondSnapshot, context: BondExportContext, period: BondExportPeriod, options: BondExportOptions = {}) {
+  const prepared = prepareBondExport(snapshot, context, period, options);
   const lines = [
     `# snapshot_version=${prepared.metadata.version}`,
     `# snapshot_sha256=${prepared.metadata.snapshotSha256}`,
     `# snapshot_created_at=${prepared.metadata.snapshotCreatedAt}`,
     `# retrieved_at=${prepared.metadata.retrievedAt}`,
-    `# period=${prepared.period}; start=${prepared.startDate}; end=${prepared.endDate}`,
+    `# period=${prepared.period}; mode=${prepared.metadata.periodMode}; date_grid=${prepared.metadata.dateGrid}; start=${prepared.startDate}; end=${prepared.endDate}`,
     `# operator_selected_purpose=${prepared.metadata.operatorSelectedPurpose ?? "not-recorded"}`,
     `# source_rights_status=${JSON.stringify(prepared.metadata.sourceRightsStatus)}`,
     `# download_access=${prepared.metadata.downloadAccessNote}`,
@@ -80,8 +94,8 @@ export function bondExportCsv(snapshot: BondSnapshot, context: BondExportContext
   return lines.join("\r\n");
 }
 
-export function bondExportXlsx(snapshot: BondSnapshot, context: BondExportContext, period: BondExportPeriod): Uint8Array {
-  const prepared = prepareBondExport(snapshot, context, period);
+export function bondExportXlsx(snapshot: BondSnapshot, context: BondExportContext, period: BondExportPeriod, options: BondExportOptions = {}): Uint8Array {
+  const prepared = prepareBondExport(snapshot, context, period, options);
   const dataRows: Array<Array<string | number>> = [["Date", ...prepared.countries]];
   for (const date of prepared.dates) {
     dataRows.push([date, ...prepared.countries.map((country) => {
@@ -118,6 +132,8 @@ export function bondExportXlsx(snapshot: BondSnapshot, context: BondExportContex
     ["Snapshot created at", prepared.metadata.snapshotCreatedAt],
     ["Sources retrieved at", prepared.metadata.retrievedAt],
     ["Export period", prepared.period],
+    ["Period mode", prepared.metadata.periodMode],
+    ["Date grid", prepared.metadata.dateGrid],
     ["Period start", prepared.startDate],
     ["Period end", prepared.endDate],
     ["Operator-selected purpose", prepared.metadata.operatorSelectedPurpose ?? "not recorded"],
@@ -139,15 +155,6 @@ export function bondExportXlsx(snapshot: BondSnapshot, context: BondExportContex
     "xl/worksheets/sheet3.xml": strToU8(sheetXml(snapshotRows)),
   };
   return zipSync(files, { level: 6 });
-}
-
-function periodStart(period: Exclude<BondExportPeriod, "full">, endDate: string) {
-  if (period === "since-2020") return "2020-01-01";
-  if (period === "year-to-date") return `${endDate.slice(0, 4)}-01-01`;
-  const preset = BOND_CHART_PRESETS.find((item) => item.key === period)!;
-  const date = new Date(`${endDate}T00:00:00.000Z`);
-  date.setUTCFullYear(date.getUTCFullYear() - (preset.years ?? 1));
-  return date.toISOString().slice(0, 10);
 }
 
 function sheetXml(rows: Array<Array<string | number>>) {

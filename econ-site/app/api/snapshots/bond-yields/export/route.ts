@@ -1,8 +1,9 @@
 import { BOND_CHART_PRESETS } from "@/lib/bond-chart-assets";
 import { bondExportCsv, bondExportJson, bondExportXlsx, type BondExportPeriod } from "@/lib/bond-data-export";
+import type { BondDateGrid, BondPeriodMode } from "@/lib/bond-chart-logic";
 import { getCurrentVersion, getSnapshotBody, getVersion } from "@/lib/snapshots";
 import { ALL_BOND_COUNTRIES, validateSnapshot as validateSnapshotCore } from "@/lib/snapshot-logic";
-import type { BondSnapshot } from "@/app/data/catalog";
+import type { BondSnapshot, CountryKey } from "@/app/data/catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,9 @@ export async function GET(request: Request) {
   const requestedVersion = params.get("version");
   const format = params.get("format") ?? "csv";
   const periodText = params.get("period") ?? "last-3-years";
+  const periodModeText = params.get("mode") ?? "rolling";
+  const dateGridText = params.get("dateGrid") ?? "quarterly";
+  const countriesText = params.get("countries");
   if (!(["csv", "json", "xlsx"] as const).includes(format as "csv" | "json" | "xlsx")) {
     return exportError("format must be csv, json, or xlsx.", 400);
   }
@@ -32,6 +36,8 @@ export async function GET(request: Request) {
     ? periodText as BondExportPeriod
     : null;
   if (!period) return exportError("Unknown bond chart period.", 400);
+  if (periodModeText !== "rolling" && periodModeText !== "calendar") return exportError("mode must be rolling or calendar.", 400);
+  if (dateGridText !== "quarterly" && dateGridText !== "semiannual") return exportError("dateGrid must be quarterly or semiannual.", 400);
   if (requestedVersion !== null && (!/^\d+$/.test(requestedVersion) || Number(requestedVersion) < 1)) {
     return exportError("version must be a positive integer.", 400);
   }
@@ -48,6 +54,11 @@ export async function GET(request: Request) {
     }
     validateSnapshotCore("bond-yields", snapshot, availableCountries);
     const context = { version: row.version, snapshotSha256: row.snapshot_sha256, createdAt: row.created_at };
+    const selectedCountries = countriesText === null || period === "full" ? undefined : countriesText.split(",") as CountryKey[];
+    if (selectedCountries?.some((country) => !availableCountries.includes(country)) || (selectedCountries && new Set(selectedCountries).size !== selectedCountries.length)) {
+      return exportError("countries must be a comma-separated list of unique countries available in this snapshot.", 400);
+    }
+    const exportOptions = { periodMode: periodModeText as BondPeriodMode, dateGrid: dateGridText as BondDateGrid, countries: selectedCountries };
     const filePeriod = period === "full" ? "full-history" : period;
     const filename = `government-bond-yields-v${row.version}-${filePeriod}`;
     const headers = {
@@ -56,13 +67,13 @@ export async function GET(request: Request) {
       "X-Content-Type-Options": "nosniff",
     };
 
-    if (format === "json") return new Response(bondExportJson(snapshot, context, period), { headers: { ...headers, "Content-Type": "application/json; charset=utf-8" } });
+    if (format === "json") return new Response(bondExportJson(snapshot, context, period, exportOptions), { headers: { ...headers, "Content-Type": "application/json; charset=utf-8" } });
     if (format === "xlsx") {
-      const workbook = bondExportXlsx(snapshot, context, period);
+      const workbook = bondExportXlsx(snapshot, context, period, exportOptions);
       const workbookBody = workbook.buffer.slice(workbook.byteOffset, workbook.byteOffset + workbook.byteLength) as ArrayBuffer;
       return new Response(workbookBody, { headers: { ...headers, "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } });
     }
-    return new Response(bondExportCsv(snapshot, context, period), { headers: { ...headers, "Content-Type": "text/csv; charset=utf-8" } });
+    return new Response(bondExportCsv(snapshot, context, period, exportOptions), { headers: { ...headers, "Content-Type": "text/csv; charset=utf-8" } });
   } catch (error) {
     return exportError(error instanceof Error ? error.message : "Bond data export failed.", 503);
   }

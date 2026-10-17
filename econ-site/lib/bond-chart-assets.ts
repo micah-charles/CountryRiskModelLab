@@ -1,14 +1,6 @@
 import { BOND_COUNTRIES, type BondSnapshot, type CountryKey, type YieldPoint } from "../app/data/catalog.ts";
-
-export const BOND_CHART_PRESETS = [
-  { key: "last-3-years", label: "Last 3 years", years: 3 },
-  { key: "last-1-year", label: "Last 1 year", years: 1 },
-  { key: "year-to-date", label: "Year to date", years: null },
-  { key: "last-5-years", label: "Last 5 years", years: 5 },
-  { key: "since-2020", label: "2020–present", years: null },
-] as const;
-
-export type BondChartPresetKey = (typeof BOND_CHART_PRESETS)[number]["key"];
+import { BOND_CHART_PRESETS, calendarDateTicks, formatYieldTick, integerYieldDomain, resolveBondPeriodBounds, type BondChartPresetKey } from "./bond-chart-logic.ts";
+export { BOND_CHART_PRESETS, type BondChartPresetKey } from "./bond-chart-logic.ts";
 export type BondChartAssetInput = {
   period: BondChartPresetKey;
   country: "base" | CountryKey;
@@ -33,43 +25,19 @@ export function renderBondChartAssets(snapshot: BondSnapshot, version: number, s
   const assets: BondChartAssetInput[] = [];
 
   for (const preset of BOND_CHART_PRESETS) {
-    const startDate = periodStart(preset.key, preset.years, endDate);
+    const startDate = resolveBondPeriodBounds(preset.key, "rolling", endDate).startDate;
     const series = new Map<CountryKey, YieldPoint[]>(available.map(({ key }) => [key, (snapshot.series[key] ?? []).filter((point) => point.date >= startDate && point.date <= endDate)]));
     const values = [...series.values()].flatMap((rows) => rows.flatMap((row) => row.value === null ? [] : [row.value]));
     if (!values.length) throw new Error(`No bond observations are available for the ${preset.label} chart.`);
-    const { min, max, step } = rangeFor(values);
-    const coordinates = makeCoordinates(startDate, endDate, min, max, series);
+    const domain = integerYieldDomain(values);
+    const coordinates = makeCoordinates(startDate, endDate, domain.min, domain.max, series);
     const prefix = `${root}/${preset.key}`;
-    assets.push({ period: preset.key, country: "base", objectKey: `${prefix}/base.svg`, svg: baseSvg(snapshot, preset.label, startDate, endDate, version, available, coordinates, min, max, step) });
+    assets.push({ period: preset.key, country: "base", objectKey: `${prefix}/base.svg`, svg: baseSvg(snapshot, preset.label, startDate, endDate, version, available, coordinates, domain.ticks) });
     for (const country of available) {
       assets.push({ period: preset.key, country: country.key, objectKey: `${prefix}/${country.key}.svg`, svg: seriesSvg(country.key, coordinates.paths[country.key] ?? "", coordinates.lastPoints[country.key]) });
     }
   }
   return assets;
-}
-
-function periodStart(key: BondChartPresetKey, years: number | null, endDate: string) {
-  if (key === "since-2020") return "2020-01-01";
-  if (key === "year-to-date") return `${endDate.slice(0, 4)}-01-01`;
-  const date = new Date(`${endDate}T00:00:00.000Z`);
-  date.setUTCFullYear(date.getUTCFullYear() - (years ?? 1));
-  return date.toISOString().slice(0, 10);
-}
-
-function rangeFor(values: number[]) {
-  const low = Math.min(...values), high = Math.max(...values);
-  const padding = Math.max((high - low) * 0.08, 0.15);
-  const step = niceStep((high - low + padding * 2) / 5);
-  const min = Math.floor((low - padding) / step) * step;
-  const max = Math.ceil((high + padding) / step) * step;
-  return { min, max: max > min ? max : min + step, step };
-}
-
-function niceStep(value: number) {
-  const power = Math.pow(10, Math.floor(Math.log10(Math.max(value, 0.05))));
-  const normalized = value / power;
-  const multiplier = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 2.5 ? 2.5 : normalized <= 5 ? 5 : 10;
-  return multiplier * power;
 }
 
 function makeCoordinates(start: string, end: string, min: number, max: number, series: Map<CountryKey, YieldPoint[]>) {
@@ -93,18 +61,16 @@ function makeCoordinates(start: string, end: string, min: number, max: number, s
   return { paths, lastPoints, x, y };
 }
 
-function baseSvg(snapshot: BondSnapshot, label: string, start: string, end: string, version: number, countries: typeof BOND_COUNTRIES, coordinates: ReturnType<typeof makeCoordinates>, min: number, max: number, step: number) {
-  const ticks: number[] = [];
-  for (let value = min; value <= max + step * 0.01; value += step) ticks.push(Number(value.toFixed(6)));
+function baseSvg(snapshot: BondSnapshot, label: string, start: string, end: string, version: number, countries: typeof BOND_COUNTRIES, coordinates: ReturnType<typeof makeCoordinates>, ticks: number[]) {
   const grid = ticks.map((value) => {
     const y = coordinates.y(value);
-    return `<g><line x1="${LEFT}" x2="${RIGHT}" y1="${y.toFixed(2)}" y2="${y.toFixed(2)}" stroke="#e7ece8"/><text x="${LEFT - 14}" y="${(y + 8).toFixed(2)}" text-anchor="end" font-size="23" fill="#738078">${value.toFixed(2)}%</text></g>`;
+    return `<g><line x1="${LEFT}" x2="${RIGHT}" y1="${y.toFixed(2)}" y2="${y.toFixed(2)}" stroke="#dce5df" stroke-dasharray="7 8"/><text x="${LEFT - 14}" y="${(y + 8).toFixed(2)}" text-anchor="end" font-size="23" fill="#738078">${formatYieldTick(value)}</text></g>`;
   }).join("");
-  const xLabels = Array.from({ length: 6 }, (_, index) => {
-    const date = new Date(Date.parse(`${start}T00:00:00Z`) + (Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) * index / 5);
-    const dateText = date.toLocaleDateString("en-GB", { month: "short", year: "numeric", timeZone: "UTC" });
-    const x = LEFT + (RIGHT - LEFT) * index / 5;
-    return `<g><line x1="${x.toFixed(2)}" x2="${x.toFixed(2)}" y1="${BOTTOM}" y2="${BOTTOM + 8}" stroke="#adb8b1"/><text x="${x.toFixed(2)}" y="${BOTTOM + 38}" text-anchor="${index === 0 ? "start" : index === 5 ? "end" : "middle"}" font-size="21" fill="#738078">${escapeXml(dateText)}</text></g>`;
+  const dateTicks = calendarDateTicks(start, end, "quarterly");
+  const xLabels = dateTicks.map((date, index) => {
+    const dateText = new Date(`${date}T00:00:00Z`).toLocaleDateString("en-GB", { month: "short", year: "2-digit", timeZone: "UTC" });
+    const x = coordinates.x(date);
+    return `<g><line x1="${x.toFixed(2)}" x2="${x.toFixed(2)}" y1="${BOTTOM}" y2="${BOTTOM + 8}" stroke="#adb8b1"/><text x="${x.toFixed(2)}" y="${BOTTOM + 38}" text-anchor="${index === 0 ? "start" : index === dateTicks.length - 1 ? "end" : "middle"}" font-size="18" fill="#738078">${escapeXml(dateText)}</text></g>`;
   }).join("");
   const legend = countries.map((country, index) => {
     const x = LEFT + (index % 3) * 570;
@@ -125,7 +91,7 @@ function baseSvg(snapshot: BondSnapshot, label: string, start: string, end: stri
   const purposeNotice = purpose
     ? `<text x="${LEFT}" y="1011" font-size="15" fill="#62736a">Operator-selected purpose: personal interview. Intended use only; this is not a rights determination.</text><text x="${LEFT}" y="1031" font-size="15" fill="#62736a">Euronext and Banca d’Italia terms apply; written permission not verified. Italy BMK0200 upstream vendors are not itemized.</text>`
     : "";
-  return `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-labelledby="title desc"><title id="title">Government bond yields · ${escapeXml(label)}</title><desc id="desc">Published 10-year government bond yield observations from ${escapeXml(start)} through ${escapeXml(end)}. Missing observations remain blank. ${purpose ? "Operator-selected personal-interview purpose is not a rights determination. Euronext and Banca d’Italia terms apply; written permission is not verified." : ""}</desc><rect width="${WIDTH}" height="${HEIGHT}" fill="#fff"/><g font-family="Arial, Helvetica, sans-serif"><text x="${LEFT}" y="63" font-size="37" font-weight="700" fill="#243a30">Government bond yields · 10-year benchmarks</text><text x="${LEFT}" y="102" font-size="23" fill="#6f7e75">${escapeXml(label)} · ${escapeXml(start)} to ${escapeXml(end)} · percent per annum</text>${legend}${grid}<line x1="${LEFT}" x2="${RIGHT}" y1="${BOTTOM}" y2="${BOTTOM}" stroke="#aeb9b2" stroke-width="2"/>${xLabels}<text x="31" y="520" transform="rotate(-90 31 520)" font-size="20" fill="#607168">Yield (%)</text><text x="${LEFT}" y="911" font-size="16" fill="#54665c">Sources and status · definitions differ by country</text>${sourceLines}${purposeNotice}<text x="${LEFT}" y="1055" font-size="15" fill="#62736a">Retrieved ${retrieved} · snapshot v${version} · Missing observations remain blank; no filling or interpolation.</text></g></svg>`;
+  return `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-labelledby="title desc"><title id="title">Government bond yields · ${escapeXml(label)}</title><desc id="desc">Published 10-year government bond yield observations from ${escapeXml(start)} through ${escapeXml(end)}. Missing observations remain blank. ${purpose ? "Operator-selected personal-interview purpose is not a rights determination. Euronext and Banca d’Italia terms apply; written permission is not verified." : ""}</desc><rect width="${WIDTH}" height="${HEIGHT}" fill="#fff"/><g font-family="Arial, Helvetica, sans-serif"><text x="${LEFT}" y="63" font-size="37" font-weight="700" fill="#243a30">Government bond yields · 10-year benchmarks</text><text x="${LEFT}" y="102" font-size="23" fill="#6f7e75">${escapeXml(label)} · Range ${escapeXml(start)} to ${escapeXml(end)} · percent per annum</text>${legend}${grid}<line x1="${LEFT}" x2="${RIGHT}" y1="${BOTTOM}" y2="${BOTTOM}" stroke="#aeb9b2" stroke-width="2"/>${xLabels}<text x="31" y="520" transform="rotate(-90 31 520)" font-size="20" fill="#607168">Yield (%)</text><text x="${LEFT}" y="911" font-size="16" fill="#54665c">Sources and status · definitions differ by country; benchmark methods are not identical</text>${sourceLines}${purposeNotice}<text x="${LEFT}" y="1055" font-size="15" fill="#62736a">Retrieved ${retrieved} · snapshot v${version} · Missing observations remain blank; no filling or interpolation.</text></g></svg>`;
 }
 
 function seriesSvg(country: CountryKey, path: string, last?: { x: number; y: number; date: string; value: number }) {

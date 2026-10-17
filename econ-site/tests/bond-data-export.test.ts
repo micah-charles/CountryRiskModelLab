@@ -56,6 +56,34 @@ test("exports selected preset and full immutable snapshot dates without filling 
   assert.deepEqual((json.series as Record<string, Array<{ value: number | null }>>).US.map((row) => row.value), [1.1, null, 4.2]);
 });
 
+test("selected-period export uses the chart's calendar range, mode, date grid, and enabled countries", () => {
+  const selected = prepareBondExport(snapshot, context, "last-3-years", {
+    periodMode: "calendar",
+    dateGrid: "semiannual",
+    countries: ["Japan", "US"],
+  });
+  assert.equal(selected.startDate, "2024-01-01");
+  assert.equal(selected.endDate, "2026-10-10");
+  assert.deepEqual(selected.countries, ["US", "Japan"]);
+  assert.equal(selected.metadata.periodMode, "calendar");
+  assert.equal(selected.metadata.dateGrid, "semiannual");
+  assert.deepEqual(selected.dates, ["2026-10-10"]);
+
+  const workbook = unzipSync(bondExportXlsx(snapshot, context, "last-3-years", {
+    periodMode: "calendar",
+    dateGrid: "semiannual",
+    countries: ["US", "Japan"],
+  }));
+  const data = new TextDecoder().decode(workbook["xl/worksheets/sheet1.xml"]);
+  const info = new TextDecoder().decode(workbook["xl/worksheets/sheet3.xml"]);
+  assert.match(data, /US/);
+  assert.match(data, /Japan/);
+  assert.doesNotMatch(data, /France/);
+  assert.match(info, /calendar/);
+  assert.match(info, /semiannual/);
+  assert.match(info, /2024-01-01/);
+});
+
 test("preserves four-country historical snapshots and keeps source text inert in tabular exports", () => {
   const historical: BondSnapshot = {
     ...snapshot,

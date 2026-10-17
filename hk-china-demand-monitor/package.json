@@ -1,0 +1,17 @@
+{
+  "name": "hk-china-demand-monitor-automation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "qa:browser": "tsx browser/qa_browser_verification.ts",
+    "hkex:download": "tsx browser/hkex_download_playwright.ts",
+    "test:web": "playwright test tests/web_evidence_audit.spec.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "playwright": "^1.52.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
+

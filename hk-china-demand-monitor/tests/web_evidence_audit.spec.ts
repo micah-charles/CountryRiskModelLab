@@ -1,0 +1,1 @@
+import{test,expect}from"@playwright/test";test("dashboard exposes evidence navigation",async({page})=>{await page.goto(process.env.WEB_BASE_URL||"http://127.0.0.1:5173/");await expect(page.getByText("China Demand Monitor")).toBeVisible();await page.getByRole("button",{name:"Evidence"}).click();await expect(page.getByPlaceholder(/Search company/)).toBeVisible()});

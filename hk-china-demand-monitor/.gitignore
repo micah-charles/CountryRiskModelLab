@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+web/node_modules/
+web/dist/
+logs/*.log
+data/raw/annual_reports/**/*.pdf
+data/interim/pdf_text/**
+data/interim/ocr_text/**
+state/document_state.sqlite
+

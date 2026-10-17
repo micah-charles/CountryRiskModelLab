@@ -1,0 +1,17 @@
+download_sources:
+  priority: [hkex_title_search, hkex_playwright, browser_use, firecrawl, manual]
+  delay_seconds: 2
+  retries: 3
+  firecrawl:
+    enabled: false
+    workspace: /Volumes/ExtremePro/AIWorkspace/firecrawl
+    api_url: http://localhost:3002
+    max_pages_per_company: 20
+    delay_seconds: 2
+    cache: true
+llm_cache:
+  enabled: true
+  cache_dir: data/interim/llm_cache
+  require_input_hash_match: true
+  prompt_version: deterministic-v1
+  schema_version: 1

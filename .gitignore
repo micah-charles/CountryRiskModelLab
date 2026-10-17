@@ -30,3 +30,21 @@ qa/browser-use/button-qa-report.md
 qa/browser-use/button-qa-results.json
 qa/browser-use/screenshots/
 release_evidence/
+
+# Private research content is stored separately from public application source.
+backend/app/research_cases/
+backend/app/data_registry/
+government-bond-yields/data/
+government-bond-yields/outputs/
+hk-china-demand-monitor/data/
+hk-china-demand-monitor/state/
+hk-china-demand-monitor/logs/
+hk-china-demand-monitor/web/public/data/
+econ-site/.private*/
+econ-site/.sites-runtime/
+econ-site/.wrangler/
+econ-site/.next/
+econ-site/dist/
+# Site ownership is local to the private deployment; publish only its template.
+/econ-site/.openai/hosting.json
+/docs/ECON_INTEGRATION_REVIEW.md

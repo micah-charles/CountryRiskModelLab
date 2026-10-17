@@ -1,0 +1,39 @@
+metrics:
+  revenue_total: {type: number, unit: currency, aliases: [revenue, turnover, total revenue], required: true}
+  revenue_china_or_mainland: {type: number, unit: currency, aliases: [mainland china revenue, revenue from mainland china], required: false}
+  revenue_china_share: {type: percentage, aliases: [mainland china revenue percentage, china revenue share], required: false}
+  revenue_yoy: {type: percentage, aliases: [revenue growth, turnover growth], required: false}
+  gross_profit: {type: number, unit: currency, aliases: [gross profit], required: false}
+  gross_margin: {type: percentage, aliases: [gross profit margin, gross margin], required: false}
+  operating_profit: {type: number, unit: currency, aliases: [operating profit], required: false}
+  operating_margin: {type: percentage, aliases: [operating margin], required: false}
+  net_profit: {type: number, unit: currency, aliases: [profit attributable, net profit], required: false}
+  net_margin: {type: percentage, aliases: [net profit margin, net margin], required: false}
+  capex: {type: number, unit: currency, aliases: [capital expenditure, capex], required: false}
+  free_cash_flow: {type: number, unit: currency, aliases: [free cash flow], required: false}
+  same_store_sales_growth: {type: percentage, aliases: [same-store sales growth, same store sales growth, ssseg], required: false}
+  customer_traffic_growth: {type: percentage, aliases: [customer traffic growth, foot traffic growth], required: false}
+  table_turnover_rate: {type: number, aliases: [table turnover rate], required: false}
+  average_spending_per_customer: {type: number, unit: currency, aliases: [average spending per customer, average ticket], required: false}
+  average_selling_price: {type: number, unit: currency, aliases: [average selling price, asp], required: false}
+  sales_volume: {type: number, aliases: [sales volume], required: false}
+  delivery_volume: {type: number, aliases: [delivery volume, deliveries], required: false}
+  gmv: {type: number, unit: currency, aliases: [gross merchandise volume, gmv], required: false}
+  order_volume: {type: number, aliases: [order volume, orders], required: false}
+  active_customers: {type: number, aliases: [active customers], required: false}
+  monthly_transacting_users: {type: number, aliases: [monthly transacting users], required: false}
+  store_count: {type: number, aliases: [number of stores, store count], required: false}
+  net_store_openings: {type: number, aliases: [net store openings, net openings], required: false}
+  store_closures: {type: number, aliases: [store closures, closed stores], required: false}
+  mall_occupancy_rate: {type: percentage, aliases: [mall occupancy rate, occupancy rate], required: false}
+  tenant_sales_growth: {type: percentage, aliases: [tenant sales growth], required: false}
+  rental_income_growth: {type: percentage, aliases: [rental income growth], required: false}
+  inventory: {type: number, unit: currency, aliases: [inventories, inventory], required: false}
+  inventory_yoy: {type: percentage, aliases: [inventory growth], required: false}
+  inventory_days: {type: number, aliases: [inventory turnover days, inventory days], required: false}
+  trade_receivables: {type: number, unit: currency, aliases: [trade receivables], required: false}
+  receivable_days: {type: number, aliases: [trade receivable turnover days, receivable days], required: false}
+narrative_themes:
+  negative: [weak demand, challenging market, cautious consumption, rational consumption, consumption downgrade, price competition, promotional activity, inventory pressure, channel destocking]
+  positive: [recovery, resilience, premiumisation]
+

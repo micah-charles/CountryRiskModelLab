@@ -1,0 +1,34 @@
+name: Econ Site source and build
+on:
+  push:
+    paths: ['econ-site/**', 'scripts/sync_public_source.py', 'scripts/tests/**', '.github/workflows/econ-site-ci.yml']
+  pull_request:
+    paths: ['econ-site/**', 'scripts/sync_public_source.py', 'scripts/tests/**', '.github/workflows/econ-site-ci.yml']
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: econ-site/package-lock.json
+      - name: Verify code-only export boundary
+        run: python3 -m unittest discover -s scripts/tests -v
+      - name: Install Site dependencies
+        run: npm ci --prefix econ-site
+      - name: Prepare anonymous local build configuration
+        run: cp econ-site/.openai/hosting.example.json econ-site/.openai/hosting.json
+      - name: Snapshot and official-source parser tests
+        run: node --test econ-site/tests/*.test.*
+      - name: Type-check Site
+        working-directory: econ-site
+        run: npx tsc --noEmit
+      - name: Lint Site
+        run: npm --prefix econ-site run lint
+      - name: Build private Site
+        run: npm --prefix econ-site run build

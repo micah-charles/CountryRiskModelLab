@@ -1,8 +1,10 @@
-# Architecture
+# Risk Research Lab Architecture
 
 ## Scope
 
-Country Risk Statistical Model Lab is an educational country-risk modelling platform with a React frontend and FastAPI backend. It supports sample datasets, uploaded CSVs, IMF DataMapper imports, OLS regression, ARIMA/SARIMAX forecasting, VAR learning, JSON lesson packs, and Markdown model review memos.
+Risk Research Lab is an educational country-risk and market-risk research platform with a React frontend and FastAPI backend. Country Risk remains the macro/statistical workspace, while Research Cases, the Indicator Registry, Formula Playground, and Historical Event Lab provide a shared evidence-to-decision workflow.
+
+The detailed extension audit, Case Pack schema, provenance rules, and milestone evidence are maintained in [risk-research-lab-architecture.md](risk-research-lab-architecture.md).
 
 ## Logical Components
 
@@ -15,11 +17,15 @@ flowchart LR
     B --> F["Lesson Service"]
     B --> G["Memo Service"]
     B --> H["Audit Ledger"]
+    B --> N["Research Case Registry"]
+    B --> O["Indicator Registry"]
+    B --> P["Trusted Formula Engine"]
     D --> I["IMF DataMapper API"]
     C --> J["Sample CSV"]
     C --> K["Uploaded CSV"]
     C --> L["Generated IMF CSV"]
     E --> M["statsmodels / sklearn"]
+    N --> Q["Validated Case Packs"]
 ```
 
 ## Production Control Points

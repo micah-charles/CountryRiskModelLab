@@ -15,8 +15,10 @@ Use `.env.example` as the contract. In production:
 - `AUDIT_SINKS=local,http` and `AUDIT_HTTP_ENDPOINT` can forward tamper-evident audit events to SIEM or central logging
 - `MODEL_APPROVALS_PATH` controls the model-risk approval store
 - `RATE_LIMIT_ENABLED=true`, `RATE_LIMIT_REQUESTS`, and `RATE_LIMIT_WINDOW_SECONDS` enable service-level throttling
-- `RBAC_ENFORCED=true` enables service-level role enforcement for sensitive endpoints
+- `RBAC_ENFORCED=true` enables service-level role enforcement for sensitive endpoints. With authenticated API access enabled, roles must come from validated JWT/OIDC `roles` or `groups` claims; `X-Actor-Roles` is ignored.
 - `DATASET_REGISTRY_BACKEND=json` for local MVP or `sqlite` for transactional registry storage
+
+API-key mode provides authentication only and does not assign an application role. If RBAC is enabled, role-protected actions therefore require an identity token with the required validated role/group claim. For a deliberately single-user API-key deployment, an operator may set `RBAC_ENFORCED=false` after considering the trade-off; do not treat the API key or a caller-supplied role header as an administrator role. `X-Actor-Roles` is accepted only for unauthenticated local development/test workflows.
 
 ## Backend Container
 

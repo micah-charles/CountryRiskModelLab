@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 from pathlib import Path
 
@@ -20,11 +21,18 @@ from app.models.schemas import (
     ImfIndicator,
     ImfPrefetchAllRequest,
     ImfPrefetchedSessionRequest,
+    FormulaCalculationRequest,
+    FormulaCalculationResponse,
+    FormulaDefinition,
+    IndicatorDefinition,
     Lesson,
     MemoRequest,
     MemoResponse,
     ModelReadinessRequest,
     ModelReadinessResponse,
+    ResearchCase,
+    ResearchCaseImportResponse,
+    ResearchCaseSummary,
     ModelApprovalCreateRequest,
     ModelApprovalDecisionRequest,
     RegressionRequest,
@@ -46,12 +54,16 @@ from app.services.imf_service import (
     supported_countries,
 )
 from app.services.indicator_mapping_service import list_indicators
+from app.services.indicator_registry_service import get_indicator_definition, list_indicator_definitions
 from app.services.lesson_service import get_lesson, list_lessons
 from app.services.memo_service import generate_memo
 from app.services.metrics_service import metrics_text
 from app.services.model_readiness_service import assess_model_readiness
 from app.services.model_approval_service import decide_model_approval, list_model_approvals, submit_model_approval
 from app.services.model_governance_service import load_model_catalog
+from app.services.formula_engine import calculate_formula, get_formula_definition, list_formula_definitions
+from app.services.analytical_support_service import AnalyticalSupportDefinition, get_analytical_support
+from app.services.research_case_service import case_artifact_path, get_research_case, import_case_pack, list_research_cases
 from app.services.rbac_service import require_roles
 from app.services.readiness_service import readiness_report
 from app.services.regression_service import run_regression
@@ -81,6 +93,43 @@ def friendly_error(exc: Exception) -> HTTPException:
     return HTTPException(status_code=400, detail=str(exc))
 
 
+def ensure_model_ready(payload: RegressionRequest | ForecastRequest | VarRequest) -> None:
+    if isinstance(payload, RegressionRequest):
+        request = ModelReadinessRequest(
+            dataset_id=payload.dataset_id,
+            lab_type="regression",
+            country=payload.country,
+            date_start=payload.date_start,
+            date_end=payload.date_end,
+            dependent_variable=payload.dependent_variable,
+            independent_variables=payload.independent_variables,
+        )
+    elif isinstance(payload, ForecastRequest):
+        request = ModelReadinessRequest(
+            dataset_id=payload.dataset_id,
+            lab_type="forecast",
+            country=payload.country,
+            date_start=payload.date_start,
+            date_end=payload.date_end,
+            target_variable=payload.target_variable,
+            model_type=payload.model_type,
+            external_variables=payload.external_variables,
+        )
+    else:
+        request = ModelReadinessRequest(
+            dataset_id=payload.dataset_id,
+            lab_type="var",
+            country=payload.country,
+            date_start=payload.date_start,
+            date_end=payload.date_end,
+            variables=payload.variables,
+            lag_order=payload.lag_order,
+        )
+    result = assess_model_readiness(request)
+    if not result.run_enabled:
+        raise ValueError("Model readiness check failed: " + " ".join(result.blocking_issues))
+
+
 def request_id(request: Request) -> str | None:
     return getattr(request.state, "request_id", None)
 
@@ -103,6 +152,116 @@ def version() -> dict:
 @app.get("/api/metrics")
 def metrics() -> Response:
     return Response(metrics_text(), media_type="text/plain; version=0.0.4")
+
+
+@app.get("/api/research-cases", response_model=list[ResearchCaseSummary])
+def research_cases() -> list[ResearchCaseSummary]:
+    return list_research_cases()
+
+
+@app.get("/api/research-cases/{case_id}", response_model=ResearchCase)
+def research_case(case_id: str) -> ResearchCase:
+    try:
+        return get_research_case(case_id)
+    except Exception as exc:
+        raise friendly_error(exc) from exc
+
+
+@app.post("/api/research-cases/import", response_model=ResearchCaseImportResponse)
+async def research_case_import(request: Request, file: UploadFile = File(...)) -> ResearchCaseImportResponse:
+    require_roles(request, {"economist", "data_steward", "operator"}, "research_cases.import")
+    try:
+        max_upload_bytes = 100 * 1024 * 1024
+        content = await file.read(max_upload_bytes + 1)
+        if len(content) > max_upload_bytes:
+            raise HTTPException(status_code=413, detail="Case Pack exceeds the 100 MiB upload limit.")
+        result = await asyncio.to_thread(import_case_pack, content)
+        if not result.valid:
+            raise HTTPException(status_code=400, detail={"message": "Case Pack validation failed.", "validation": result.model_dump()})
+        write_audit_event(
+            "research_case.imported",
+            actor_from_request(request),
+            request_id(request),
+            metadata={"case_id": result.case_id, "filename": file.filename, "warnings": result.warnings},
+        )
+        return result
+    except HTTPException:
+        raise
+    except Exception as exc:
+        write_audit_event(
+            "research_case.imported",
+            actor_from_request(request),
+            request_id(request),
+            status="failed",
+            metadata={"filename": file.filename, "error": str(exc)},
+        )
+        raise friendly_error(exc) from exc
+
+
+@app.get("/api/research-cases/{case_id}/artifact/{artifact_path:path}")
+def research_case_artifact(case_id: str, artifact_path: str) -> FileResponse:
+    try:
+        path = case_artifact_path(case_id, artifact_path)
+        return FileResponse(path)
+    except Exception as exc:
+        raise friendly_error(exc) from exc
+
+
+@app.get("/api/indicators", response_model=list[IndicatorDefinition])
+def indicators() -> list[IndicatorDefinition]:
+    return list_indicator_definitions()
+
+
+@app.get("/api/indicators/{indicator_id}", response_model=IndicatorDefinition)
+def indicator(indicator_id: str) -> IndicatorDefinition:
+    try:
+        return get_indicator_definition(indicator_id)
+    except Exception as exc:
+        raise friendly_error(exc) from exc
+
+
+@app.get("/api/formulas", response_model=list[FormulaDefinition])
+def formulas() -> list[FormulaDefinition]:
+    return list_formula_definitions()
+
+
+@app.get("/api/formulas/{formula_id}", response_model=FormulaDefinition)
+def formula(formula_id: str) -> FormulaDefinition:
+    try:
+        return get_formula_definition(formula_id)
+    except Exception as exc:
+        raise friendly_error(exc) from exc
+
+
+@app.get("/api/analytical-support/{support_type}/{reference_id}", response_model=AnalyticalSupportDefinition)
+def analytical_support(support_type: str, reference_id: str) -> AnalyticalSupportDefinition:
+    try:
+        return get_analytical_support(support_type, reference_id)
+    except Exception as exc:
+        raise friendly_error(exc) from exc
+
+
+@app.post("/api/formulas/calculate", response_model=FormulaCalculationResponse)
+def formula_calculate(payload: FormulaCalculationRequest, request: Request) -> FormulaCalculationResponse:
+    require_roles(request, {"viewer", "economist", "model_risk"}, "formulas.calculate")
+    try:
+        result = calculate_formula(payload)
+        write_audit_event(
+            "formula.calculated",
+            actor_from_request(request),
+            request_id(request),
+            metadata={"formula_id": payload.formula_id, "input_origin": payload.input_origin},
+        )
+        return result
+    except Exception as exc:
+        write_audit_event(
+            "formula.calculated",
+            actor_from_request(request),
+            request_id(request),
+            status="failed",
+            metadata={"formula_id": payload.formula_id, "error": str(exc)},
+        )
+        raise friendly_error(exc) from exc
 
 
 @app.get("/api/datasets", response_model=list[DatasetMetadata])
@@ -298,6 +457,7 @@ def imf_prefetched_session(payload: ImfPrefetchedSessionRequest, request: Reques
 def regression(payload: RegressionRequest, request: Request) -> RegressionResult:
     require_roles(request, {"economist", "model_risk"}, "models.regression.run")
     try:
+        ensure_model_ready(payload)
         result = run_regression(payload)
         write_audit_event(
             "model.regression_run",
@@ -360,6 +520,7 @@ def model_readiness(payload: ModelReadinessRequest, request: Request) -> ModelRe
 def forecast(payload: ForecastRequest, request: Request) -> ForecastResult:
     require_roles(request, {"economist", "model_risk"}, "models.forecast.run")
     try:
+        ensure_model_ready(payload)
         result = run_forecast(payload)
         write_audit_event(
             "model.forecast_run",
@@ -390,6 +551,7 @@ def forecast(payload: ForecastRequest, request: Request) -> ForecastResult:
 def var_model(payload: VarRequest, request: Request) -> VarResult:
     require_roles(request, {"economist", "model_risk"}, "models.var.run")
     try:
+        ensure_model_ready(payload)
         result = run_var(payload)
         write_audit_event(
             "model.var_run",

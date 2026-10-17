@@ -1,5 +1,6 @@
 import type { DatasetMetadata, DatasetPreview, ImfCountry, ImfCountryCatalog, ImfFetchResponse, ImfIndicator, ModelReadinessRequest, ModelReadinessResponse } from "../types/dataset";
 import type { Lesson } from "../types/lesson";
+import type { AnalyticalSupportDefinition, CasePackValidation, FormulaCalculation, FormulaDefinition, IndicatorDefinition, ResearchCase, ResearchCaseSummary } from "../types/research";
 
 const API_BASE = "";
 
@@ -10,7 +11,8 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   });
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
-    throw new Error(payload.detail || "The request failed. Please try again.");
+    const detail = payload.detail;
+    throw new Error(typeof detail === "string" ? detail : detail ? JSON.stringify(detail) : "The request failed. Please try again.");
   }
   return response.json() as Promise<T>;
 }
@@ -37,5 +39,17 @@ export const api = {
   runForecast: (body: unknown) => request<Record<string, unknown>>("/api/models/forecast/run", { method: "POST", body: JSON.stringify(body) }),
   runVar: (body: unknown) => request<Record<string, unknown>>("/api/models/var/run", { method: "POST", body: JSON.stringify(body) }),
   generateMemo: (body: unknown) => request<{ markdown: string }>("/api/memo/generate", { method: "POST", body: JSON.stringify(body) }),
-  lessons: () => request<Lesson[]>("/api/lessons")
+  lessons: () => request<Lesson[]>("/api/lessons"),
+  researchCases: () => request<ResearchCaseSummary[]>("/api/research-cases"),
+  researchCase: (caseId: string) => request<ResearchCase>(`/api/research-cases/${caseId}`),
+  analyticalSupport: (supportType: string, referenceId: string) => request<AnalyticalSupportDefinition>(`/api/analytical-support/${encodeURIComponent(supportType)}/${encodeURIComponent(referenceId)}`),
+  importResearchCase: (file: File) => {
+    const body = new FormData();
+    body.append("file", file);
+    return request<CasePackValidation>("/api/research-cases/import", { method: "POST", body });
+  },
+  indicators: () => request<IndicatorDefinition[]>("/api/indicators"),
+  formulas: () => request<FormulaDefinition[]>("/api/formulas"),
+  formula: (formulaId: string) => request<FormulaDefinition>(`/api/formulas/${formulaId}`),
+  calculateFormula: (body: { formula_id: string; parameters: Record<string, unknown>; input_origin: "formula_example" | "case_values" | "user_modified" }) => request<FormulaCalculation>("/api/formulas/calculate", { method: "POST", body: JSON.stringify(body) })
 };

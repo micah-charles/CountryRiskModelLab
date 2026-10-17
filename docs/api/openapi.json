@@ -1,6 +1,157 @@
 {
   "components": {
     "schemas": {
+      "AnalyticalSupport": {
+        "description": "A safe reference to a reusable learning explanation.",
+        "properties": {
+          "available_before_reveal": {
+            "default": true,
+            "title": "Available Before Reveal",
+            "type": "boolean"
+          },
+          "reference_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Id"
+          },
+          "summary": {
+            "default": "",
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "default": "none",
+            "enum": [
+              "formula",
+              "statistical_model",
+              "transmission",
+              "identity",
+              "rule_of_thumb",
+              "none"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "title": "AnalyticalSupport",
+        "type": "object"
+      },
+      "AnalyticalSupportDefinition": {
+        "properties": {
+          "available_before_reveal": {
+            "default": true,
+            "title": "Available Before Reveal",
+            "type": "boolean"
+          },
+          "formula": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formula"
+          },
+          "identity": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Identity"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "reference_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Id"
+          },
+          "rule_of_thumb": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Of Thumb"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "support_type": {
+            "enum": [
+              "formula",
+              "statistical_model",
+              "transmission",
+              "identity",
+              "rule_of_thumb",
+              "none"
+            ],
+            "title": "Support Type",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "transmission": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TransmissionDefinition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "support_type",
+          "title",
+          "summary"
+        ],
+        "title": "AnalyticalSupportDefinition",
+        "type": "object"
+      },
       "Body_research_case_import_api_research_cases_import_post": {
         "properties": {
           "file": {
@@ -722,6 +873,12 @@
             },
             "title": "Relevant Indicator Ids",
             "type": "array"
+          },
+          "support_type": {
+            "const": "formula",
+            "default": "formula",
+            "title": "Support Type",
+            "type": "string"
           },
           "variables": {
             "items": {
@@ -1684,6 +1841,111 @@
         "title": "ModelReadinessResponse",
         "type": "object"
       },
+      "PredictionQuestion": {
+        "additionalProperties": true,
+        "description": "A prediction prompt with an explicit answer semantic.",
+        "properties": {
+          "actual_answer": {
+            "title": "Actual Answer"
+          },
+          "actual_direction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Direction"
+          },
+          "analytical_support": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AnalyticalSupport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assessment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assessment"
+          },
+          "confidence_required": {
+            "default": true,
+            "title": "Confidence Required",
+            "type": "boolean"
+          },
+          "expected_answer": {
+            "title": "Expected Answer"
+          },
+          "explanation": {
+            "default": "",
+            "title": "Explanation",
+            "type": "string"
+          },
+          "magnitude_label": {
+            "default": "Expected magnitude / range",
+            "title": "Magnitude Label",
+            "type": "string"
+          },
+          "magnitude_placeholder": {
+            "default": "e.g. +25 to +50bp",
+            "title": "Magnitude Placeholder",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "prediction_id": {
+            "title": "Prediction Id",
+            "type": "string"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "source_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Source Ids",
+            "type": "array"
+          },
+          "type": {
+            "default": "directional",
+            "enum": [
+              "directional",
+              "binary",
+              "numeric",
+              "categorical",
+              "ranking",
+              "free_text"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prediction_id",
+          "prompt"
+        ],
+        "title": "PredictionQuestion",
+        "type": "object"
+      },
       "RegressionRequest": {
         "properties": {
           "country": {
@@ -2020,8 +2282,7 @@
           },
           "predictions": {
             "items": {
-              "additionalProperties": true,
-              "type": "object"
+              "$ref": "#/components/schemas/PredictionQuestion"
             },
             "title": "Predictions",
             "type": "array"
@@ -2308,6 +2569,90 @@
           "summary"
         ],
         "title": "ResearchCaseSummary",
+        "type": "object"
+      },
+      "TransmissionChannel": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "direction": {
+            "default": "conditional",
+            "title": "Direction",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "description"
+        ],
+        "title": "TransmissionChannel",
+        "type": "object"
+      },
+      "TransmissionDefinition": {
+        "properties": {
+          "channels": {
+            "items": {
+              "$ref": "#/components/schemas/TransmissionChannel"
+            },
+            "title": "Channels",
+            "type": "array"
+          },
+          "countervailing_channels": {
+            "items": {
+              "$ref": "#/components/schemas/TransmissionChannel"
+            },
+            "title": "Countervailing Channels",
+            "type": "array"
+          },
+          "evidence_refs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "expected_relationship": {
+            "title": "Expected Relationship",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "transmission_id": {
+            "title": "Transmission Id",
+            "type": "string"
+          },
+          "trigger": {
+            "title": "Trigger",
+            "type": "string"
+          }
+        },
+        "required": [
+          "transmission_id",
+          "title",
+          "summary",
+          "trigger",
+          "expected_relationship"
+        ],
+        "title": "TransmissionDefinition",
         "type": "object"
       },
       "ValidationError": {
@@ -2603,6 +2948,54 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/analytical-support/{support_type}/{reference_id}": {
+      "get": {
+        "operationId": "analytical_support_api_analytical_support__support_type___reference_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "support_type",
+            "required": true,
+            "schema": {
+              "title": "Support Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "reference_id",
+            "required": true,
+            "schema": {
+              "title": "Reference Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticalSupportDefinition"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analytical Support"
+      }
+    },
     "/api/audit/events": {
       "get": {
         "operationId": "audit_events_api_audit_events_get",

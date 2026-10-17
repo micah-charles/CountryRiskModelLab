@@ -26,6 +26,8 @@ jobs:
         run: npm ci
       - name: Frontend build
         run: npm run build
+      - name: Initialize public sample registry for operational checks
+        run: PYTHONPATH=backend backend/.venv/bin/python -c "from app.services.dataset_registry_service import register_sample_datasets; register_sample_datasets()"
       - name: Registry integrity check
         run: python3 scripts/registry_integrity_check.py
       - name: SQLite registry migration check

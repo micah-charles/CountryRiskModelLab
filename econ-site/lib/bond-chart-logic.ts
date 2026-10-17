@@ -16,6 +16,7 @@ export type BondChartModel = {
   yMin: number;
   yMax: number;
   ticks: Array<{ value: number; y: number; label: string }>;
+  verticalGuides: Array<{ date: string; x: number }>;
   labels: Array<{ date: string; x: number; text: string; anchor: "start" | "middle" | "end" }>;
   paths: Partial<Record<CountryKey, string>>;
   lastPoints: Partial<Record<CountryKey, { x: number; y: number; date: string; value: number }>>;
@@ -141,9 +142,10 @@ export function buildBondChartModel(
     paths[country] = commands.join(" ");
   }
   const rawTicks = domain.ticks;
-  const labels = calendarDateTicks(startDate, endDate, dateGrid).map((date, index, all) => ({
+  const verticalGuides = calendarDateTicks(startDate, endDate, dateGrid).map((date) => ({ date, x: xForDate(date) }));
+  const labels = verticalGuides.map(({ date, x }, index, all) => ({
     date,
-    x: xForDate(date),
+    x,
     text: new Date(`${date}T00:00:00Z`).toLocaleDateString("en-GB", { month: "short", year: "2-digit", timeZone: "UTC" }),
     anchor: index === 0 ? "start" as const : index === all.length - 1 ? "end" as const : "middle" as const,
   }));
@@ -151,6 +153,7 @@ export function buildBondChartModel(
     yMin: domain.min,
     yMax: domain.max,
     ticks: rawTicks.map((value) => ({ value, y: yForValue(value), label: formatYieldTick(value) })),
+    verticalGuides,
     labels,
     paths,
     lastPoints,

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { BOND_CHART_PRESETS, renderBondChartAssets } from "../lib/bond-chart-assets.ts";
+import { calendarDateTicks, resolveBondPeriodBounds } from "../lib/bond-chart-logic.ts";
 import { BOND_SOURCE_DETAILS, type BondSnapshot } from "../app/data/catalog.ts";
 
 const retrievedAt = "2026-10-17T12:00:00Z";
@@ -47,6 +48,9 @@ test("renders five preset image bundles with version-and-content-addressed keys"
     assert.match(base.svg, /Missing observations remain blank/);
     assert.match(base.svg, /1920/);
     assert.match(base.svg, /stroke-dasharray="7 8"/);
+    const endDate = "2026-10-10";
+    const startDate = resolveBondPeriodBounds(period.key, "rolling", endDate).startDate;
+    assert.equal((base.svg.match(/stroke-dasharray="3 6"/g) ?? []).length, calendarDateTicks(startDate, endDate, "quarterly").length);
     assert.match(base.svg, />0%<\/text>/);
     assert.match(base.svg, />4%<\/text>/);
     assert.match(us.svg, /<path d="M/);

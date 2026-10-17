@@ -71,6 +71,7 @@ export function BondYieldChart(props: Props) {
       return <g key={`legend-${country}`}><line x1={x} x2={x + 25} y1={y} y2={y} stroke={item.color} strokeWidth="3" strokeDasharray={dashPattern(country)} /><text x={x + 33} y={y + 4} fontSize="12" fill="#33463d">{item.name}</text></g>;
     })}
     {model.ticks.map((tick) => <g key={tick.value}><line x1={LEFT} x2={RIGHT} y1={tick.y} y2={tick.y} stroke="#dce5df" strokeDasharray="5 7"/><text x={LEFT - 12} y={tick.y + 4} textAnchor="end" fontSize="12" fill="#738078">{tick.label}</text></g>)}
+    {model.verticalGuides.map((guide) => <line key={`grid-${guide.date}`} x1={guide.x} x2={guide.x} y1={TOP} y2={BOTTOM} stroke="#e9eeeb" strokeDasharray="3 6" strokeWidth="1"/>)}
     <line x1={LEFT} x2={RIGHT} y1={BOTTOM} y2={BOTTOM} stroke="#aeb9b2" strokeWidth="1.5"/>
     {model.labels.map((label) => <g key={label.date}><line x1={label.x} x2={label.x} y1={BOTTOM} y2={BOTTOM + 7} stroke="#aebbb4"/><text x={label.x} y={BOTTOM + 25} textAnchor={label.anchor} fontSize="11" fill="#738078">{label.text}</text></g>)}
     {selected.map((country) => {

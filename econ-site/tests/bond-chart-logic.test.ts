@@ -62,4 +62,7 @@ test("chart model preserves null gaps and emits integer ticks plus aligned dates
   assert.equal((model.paths.US?.match(/M/g) ?? []).length, 2);
   assert.deepEqual(model.ticks.map((tick) => tick.value), [-1, 0, 1, 2]);
   assert.deepEqual(model.labels.map((label) => label.date), ["2024-01-01", "2024-04-01"]);
+  assert.deepEqual(model.verticalGuides.map((guide) => guide.date), ["2024-01-01", "2024-04-01"]);
+  assert.deepEqual(model.verticalGuides.map((guide) => guide.x), model.labels.map((label) => label.x));
+  assert.ok(model.verticalGuides.every((guide) => guide.x === model.xForDate(guide.date)));
 });

@@ -72,7 +72,7 @@ export function VarLabPage({ activeDatasetId, setLastModelResult }: { activeData
 
   return (
     <div className="lab-layout">
-      <ModelConfigPanel title="VAR Lab">
+      <ModelConfigPanel title="Vector Autoregression Lab">
         <label className="field"><span>Dataset</span><select value={datasetId} onChange={(event) => setDatasetId(event.target.value)}>{datasets.map((item) => <option key={item.dataset_id} value={item.dataset_id}>{item.name}</option>)}</select></label>
         <label className="field"><span>Country</span><select value={country} onChange={(event) => setCountry(event.target.value)}>{preview?.countries.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label className="field"><span>Date start</span><input placeholder={preview?.date_range?.split(" to ")[0] || "optional"} value={dateStart} onChange={(event) => setDateStart(event.target.value)} /></label>

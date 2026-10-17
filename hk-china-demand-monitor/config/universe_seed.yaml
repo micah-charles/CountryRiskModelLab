@@ -1,0 +1,28 @@
+companies:
+  - {stock_code: "06862", name_en: HAIDILAO, industry: Restaurants and catering, china_demand_relevance: "Restaurant traffic, table turnover, customer spending"}
+  - {stock_code: "09922", name_en: JIUMAOJIU, industry: Restaurants and catering, china_demand_relevance: "Mass-market dining demand and same-store sales"}
+  - {stock_code: "00520", name_en: XIABUXIABU, industry: Restaurants and catering, china_demand_relevance: "Hotpot dining, customer traffic, spending per guest"}
+  - {stock_code: "02020", name_en: ANTA SPORTS, industry: Sportswear and apparel, china_demand_relevance: "Sportswear consumption, retail discounting, inventory"}
+  - {stock_code: "02331", name_en: LI NING, industry: Sportswear and apparel, china_demand_relevance: "Consumer confidence, channel inventory, ASP"}
+  - {stock_code: "01368", name_en: XTEP INT'L, industry: Sportswear and apparel, china_demand_relevance: "Mass sportswear demand and retail sell-through"}
+  - {stock_code: "01361", name_en: 361 DEGREES, industry: Sportswear and apparel, china_demand_relevance: "Value sportswear demand and channel inventory"}
+  - {stock_code: "00291", name_en: CHINA RES BEER, industry: Food and beverage, china_demand_relevance: "Beer demand and premiumisation"}
+  - {stock_code: "00168", name_en: TSINGTAO BREW, industry: Food and beverage, china_demand_relevance: "Beer volume, ASP, channel mix"}
+  - {stock_code: "09633", name_en: NONGFU SPRING, industry: Food and beverage, china_demand_relevance: "Packaged beverage demand and channel health"}
+  - {stock_code: "01929", name_en: CHOW TAI FOOK, industry: Jewellery and discretionary retail, china_demand_relevance: "Discretionary spending, jewellery demand, store traffic"}
+  - {stock_code: "00116", name_en: CHOW SANG SANG, industry: Jewellery and discretionary retail, china_demand_relevance: "Discretionary jewellery consumption"}
+  - {stock_code: "06690", name_en: HAIER SMARTHOME, industry: Home appliances and consumer electronics, china_demand_relevance: "Appliance replacement demand and property-cycle spillover"}
+  - {stock_code: "01070", name_en: TCL ELECTRONICS, industry: Home appliances and consumer electronics, china_demand_relevance: "TV and consumer electronics demand"}
+  - {stock_code: "01810", name_en: XIAOMI, industry: Home appliances and consumer electronics, china_demand_relevance: "Smartphone and IoT consumer demand"}
+  - {stock_code: "01211", name_en: BYD COMPANY, industry: Automobiles and EVs, china_demand_relevance: "Big-ticket consumer demand and EV price competition"}
+  - {stock_code: "00175", name_en: GEELY AUTO, industry: Automobiles and EVs, china_demand_relevance: "Auto demand, pricing power, dealer inventory"}
+  - {stock_code: "02015", name_en: LI AUTO, industry: Automobiles and EVs, china_demand_relevance: "Premium EV demand and ASP"}
+  - {stock_code: "09868", name_en: XPENG, industry: Automobiles and EVs, china_demand_relevance: "EV demand and pricing competition"}
+  - {stock_code: "09866", name_en: NIO, industry: Automobiles and EVs, china_demand_relevance: "Premium EV demand and delivery trends"}
+  - {stock_code: "09988", name_en: BABA-W, industry: E-commerce and local services, china_demand_relevance: "Online retail GMV, merchant activity, price competition"}
+  - {stock_code: "09618", name_en: JD-SW, industry: E-commerce and local services, china_demand_relevance: "Retail sales, FMCG and logistics demand"}
+  - {stock_code: "03690", name_en: MEITUAN-W, industry: E-commerce and local services, china_demand_relevance: "Food delivery, local services, in-store consumption"}
+  - {stock_code: "01209", name_en: CHINA RES MIXC, industry: "Property management, malls, and consumer footfall proxies", china_demand_relevance: "Mall occupancy, tenant sales, footfall"}
+  - {stock_code: "06049", name_en: POLY PPT SER, industry: "Property management, malls, and consumer footfall proxies", china_demand_relevance: "Property management and local service demand"}
+  - {stock_code: "00960", name_en: LONGFOR GROUP, industry: "Property management, malls, and consumer footfall proxies", china_demand_relevance: "Malls, rental income, property-cycle spillover"}
+

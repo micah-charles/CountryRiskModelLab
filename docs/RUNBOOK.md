@@ -24,7 +24,7 @@ npm run preview
 - `GET /api/model-governance/catalog` returns registered model policies.
 - `GET /api/model-governance/approvals` returns model-risk approval records.
 - `GET /api/metrics` exposes Prometheus-style metrics for internal monitoring.
-- Production authorization requires mapped roles when `RBAC_ENFORCED=true`.
+- Production authorization requires roles from validated JWT/OIDC `roles` or `groups` claims when `RBAC_ENFORCED=true`. API-key authentication grants no roles, and `X-Actor-Roles` is ignored whenever API authentication is enabled.
 
 ## Start-of-Day Checks
 

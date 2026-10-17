@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+
+AnalyticalSupportType = Literal["formula", "statistical_model", "transmission", "identity", "rule_of_thumb", "none"]
+PredictionQuestionType = Literal["directional", "binary", "numeric", "categorical", "ranking", "free_text"]
 
 
 class HealthResponse(BaseModel):
@@ -252,6 +256,177 @@ class ModelReadinessResponse(BaseModel):
     suggested_date_end: str | None = None
     blocking_issues: list[str] = Field(default_factory=list)
     recommendations: list[str] = Field(default_factory=list)
+
+
+class CasePackValidation(BaseModel):
+    valid: bool
+    case_id: str | None = None
+    schema_version: str | None = None
+    imported: bool = False
+    files: list[str] = Field(default_factory=list)
+    file_hashes: dict[str, str] = Field(default_factory=dict)
+    errors: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    case: dict[str, Any] | None = None
+
+
+class ResearchCaseSummary(BaseModel):
+    case_id: str
+    schema_version: str
+    title: str
+    short_title: str
+    summary: str
+    countries: list[str] = Field(default_factory=list)
+    start_date: str | None = None
+    end_date: str | None = None
+    anchor_event_date: str | None = None
+    themes: list[str] = Field(default_factory=list)
+    difficulty: str = "intermediate"
+    source_count: int = 0
+    indicator_count: int = 0
+    prediction_count: int = 0
+    formula_refs: list[str] = Field(default_factory=list)
+    has_report: bool = False
+    origin: Literal["built_in", "imported"] = "built_in"
+
+
+class AnalyticalSupport(BaseModel):
+    """A safe reference to a reusable learning explanation."""
+
+    type: AnalyticalSupportType = "none"
+    reference_id: str | None = None
+    title: str = ""
+    summary: str = ""
+    available_before_reveal: bool = True
+
+
+class PredictionQuestion(BaseModel):
+    """A prediction prompt with an explicit answer semantic."""
+
+    model_config = ConfigDict(extra="allow")
+
+    prediction_id: str
+    prompt: str
+    type: PredictionQuestionType = "directional"
+    options: list[str] = Field(default_factory=list)
+    expected_answer: Any = None
+    actual_direction: str | None = None
+    actual_answer: Any = None
+    assessment: str | None = None
+    explanation: str = ""
+    source_ids: list[str] = Field(default_factory=list)
+    analytical_support: AnalyticalSupport | None = None
+    confidence_required: bool = True
+    magnitude_label: str = "Expected magnitude / range"
+    magnitude_placeholder: str = "e.g. +25 to +50bp"
+
+
+class ResearchCase(BaseModel):
+    case_id: str
+    schema_version: str
+    title: str
+    short_title: str
+    summary: str
+    countries: list[str] = Field(default_factory=list)
+    regions: list[str] = Field(default_factory=list)
+    start_date: str | None = None
+    end_date: str | None = None
+    anchor_event_date: str | None = None
+    themes: list[str] = Field(default_factory=list)
+    difficulty: str = "intermediate"
+    trigger: dict[str, Any] = Field(default_factory=dict)
+    background: str = ""
+    timeline: list[dict[str, Any]] = Field(default_factory=list)
+    expected_transmission: list[dict[str, Any]] = Field(default_factory=list)
+    actual_market_moves: list[dict[str, Any]] = Field(default_factory=list)
+    market_series: list[dict[str, Any]] = Field(default_factory=list)
+    predictions: list[PredictionQuestion] = Field(default_factory=list)
+    consequences: dict[str, Any] = Field(default_factory=dict)
+    portfolio_impacts: list[dict[str, Any]] = Field(default_factory=list)
+    formula_refs: list[str] = Field(default_factory=list)
+    lessons: list[Any] = Field(default_factory=list)
+    sources: list[dict[str, Any]] = Field(default_factory=list)
+    datasets: list[dict[str, Any]] = Field(default_factory=list)
+    artifacts: dict[str, str] = Field(default_factory=dict)
+    evidence_policy: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class IndicatorDefinition(BaseModel):
+    indicator_id: str
+    name: str
+    family: str
+    description: str
+    unit: str
+    direction_semantics: str
+    frequency: str
+    source: str
+    source_series_id: str | None = None
+    transformation: str = "none"
+    display_format: str = "value"
+
+
+class FormulaVariable(BaseModel):
+    name: str
+    symbol: str
+    label: str
+    type: Literal["number", "array", "matrix", "text"] = "number"
+    unit: str = ""
+    default: Any = None
+    min: float | None = None
+    max: float | None = None
+    step: float | None = None
+
+
+class FormulaWorkedExample(BaseModel):
+    name: str
+    inputs: dict[str, Any] = Field(default_factory=dict)
+    expected_outputs: dict[str, Any] = Field(default_factory=dict)
+
+
+class FormulaDefinition(BaseModel):
+    formula_id: str
+    name: str
+    family: str
+    business_question: str
+    support_type: Literal["formula"] = "formula"
+    difficulty: str
+    latex: str
+    plain_english: str
+    variables: list[FormulaVariable] = Field(default_factory=list)
+    assumptions: list[str] = Field(default_factory=list)
+    limitations: list[str] = Field(default_factory=list)
+    calculation_method: str
+    worked_examples: list[FormulaWorkedExample] = Field(default_factory=list)
+    related_formula_ids: list[str] = Field(default_factory=list)
+    relevant_indicator_ids: list[str] = Field(default_factory=list)
+
+
+class FormulaCalculationRequest(BaseModel):
+    formula_id: str
+    parameters: dict[str, Any] = Field(default_factory=dict)
+    input_origin: Literal["formula_example", "case_values", "user_modified"] = "user_modified"
+
+
+class FormulaStep(BaseModel):
+    label: str
+    expression: str
+    result: Any
+
+
+class FormulaCalculationResponse(BaseModel):
+    formula_id: str
+    input_origin: str
+    parameters: dict[str, Any]
+    outputs: dict[str, Any]
+    headline: str
+    steps: list[FormulaStep]
+    assumptions: list[str]
+    limitations: list[str]
+
+
+class ResearchCaseImportResponse(CasePackValidation):
+    case_summary: ResearchCaseSummary | None = None
 
 
 class MemoRequest(BaseModel):

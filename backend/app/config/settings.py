@@ -24,7 +24,7 @@ def _list_env(name: str, default: list[str]) -> list[str]:
 
 @dataclass(frozen=True)
 class Settings:
-    app_name: str = "Country Risk Statistical Model Lab"
+    app_name: str = "Risk Research Lab"
     app_version: str = "0.1.0"
     app_env: str = "development"
     log_level: str = "INFO"

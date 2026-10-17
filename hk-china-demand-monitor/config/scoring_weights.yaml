@@ -1,0 +1,20 @@
+weights:
+  revenue_china_yoy: 0.18
+  same_store_sales_growth: 0.16
+  customer_traffic_or_volume: 0.12
+  asp_or_average_ticket: 0.12
+  gross_margin_change: 0.12
+  inventory_days_change: 0.10
+  receivable_days_change: 0.06
+  store_opening_momentum: 0.06
+  management_tone_negative: 0.08
+industry_weights:
+  Restaurants and catering: 0.18
+  Sportswear and apparel: 0.17
+  Food and beverage: 0.13
+  Jewellery and discretionary retail: 0.12
+  Home appliances and consumer electronics: 0.12
+  Automobiles and EVs: 0.12
+  E-commerce and local services: 0.10
+  Property management, malls, and consumer footfall proxies: 0.06
+

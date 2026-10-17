@@ -1,10 +1,64 @@
-# Country Risk Statistical Model Lab
+# Risk Research Lab
+
+## Integrated Econ website and private research storage
+
+The `econ-site/` application brings the economics modules into one private
+ChatGPT Site. Its data views use versioned research snapshots; the Python
+statistical engines below remain available locally. Cloud model pages must not
+pretend to perform a Python calculation when no engine is connected.
+
+This public repository contains application source, not private research packs,
+PDFs, daily source downloads, credentials, or runtime registries. Existing
+public sample and IMF seed files remain as previously published. Restore your
+private packs separately before using them locally, or read a permitted private
+Site snapshot. Public CI generates clearly labelled synthetic contract fixtures
+in temporary storage when private case packs are unavailable; it does not
+publish or invent historical observations.
+
+To reconcile an existing local workspace with the original Git history, use
+`scripts/sync_public_source.py` with a separate checkout. It defaults to a dry
+run, excludes private data, preserves remote-only files, and does not reset the
+source workspace. Review its diff before committing.
+
+Risk Research Lab combines country-risk research, historical market events, and transparent risk mathematics in one learning platform. The original Country Risk statistical workflow remains available; Market Risk is added as a generic, data-driven workspace rather than a separate application.
 
 ## What This Is
 
-A Python-powered learning lab for country-risk statistical modelling.
+A Python-powered learning lab for country-risk statistical modelling and market-risk research.
 
-The platform helps country-risk analysts learn how to import macroeconomic data, run regression and time-series models, inspect diagnostics, understand the statistical logic in plain English, and document findings in a model review memo.
+The platform helps analysts import macroeconomic data, inspect evidence, predict and review historical market moves, connect consequences to a teaching portfolio, run regression and time-series models, understand the statistical logic in plain English, and document findings in a model review memo.
+
+## Risk Research Workflow
+
+The shared learning chain is:
+
+`Historical event -> market data -> prediction review -> consequence -> risk mathematics -> risk decision`
+
+Research Cases are versioned ZIP Case Packs. The generic Historical Event Lab renders any valid pack through context, prediction, reveal, comparison, consequence graph, source evidence, synthetic portfolio impact, and decision stages. The private local workspace has cases for the UK 2022 Mini-Budget / LDI crisis, the JPY 2026 intervention and carry unwind, and the September 2026 global bond sell-off.
+
+The Formula Playground exposes a trusted Formula Registry with runtime calculations and progressive steps. Imported content supplies data and references only; it cannot execute Python or JavaScript. Synthetic teaching portfolios are labelled separately from observed historical evidence.
+
+See the implementation contract in:
+
+- [Risk Research Lab architecture](docs/risk-research-lab-architecture.md)
+- [Case Pack schema v1](docs/case-pack-schema-v1.md)
+- [Indicator Registry](docs/indicator-registry.md)
+- [Formula Engine](docs/formula-engine.md)
+- [Historical Event Lab](docs/historical-event-lab.md)
+- [Data provenance](docs/data-provenance.md)
+- [Testing and validation](docs/testing-and-validation.md)
+
+## Research Case API
+
+The backend exposes the generic case workflow through:
+
+- `GET /api/research-cases` and `GET /api/research-cases/{case_id}`
+- `POST /api/research-cases/import` for validated ZIP imports
+- `GET /api/research-cases/{case_id}/artifact/{path}` for report and pack artifacts
+- `GET /api/indicators` for shared indicator definitions
+- `GET /api/formulas`, `GET /api/formulas/{formula_id}`, and `POST /api/formulas/calculate`
+
+The supplied Case Packs can be imported from the UI with **Research Cases -> Import Case Pack**. The maintained local workspace includes private copies. A clean public GitHub checkout excludes these packs and must import them before showing their content. The importer accepts the original JPY and global-bond ZIP exports directly and reports any compatibility normalization as a warning.
 
 ## What It Teaches
 

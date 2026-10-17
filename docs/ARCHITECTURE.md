@@ -1,8 +1,10 @@
-# Architecture
+# Risk Research Lab Architecture
 
 ## Scope
 
-Country Risk Statistical Model Lab is an educational country-risk modelling platform with a React frontend and FastAPI backend. It supports sample datasets, uploaded CSVs, IMF DataMapper imports, OLS regression, ARIMA/SARIMAX forecasting, VAR learning, JSON lesson packs, and Markdown model review memos.
+Risk Research Lab is an educational country-risk and market-risk research platform with a React frontend and FastAPI backend. Country Risk remains the macro/statistical workspace, while Research Cases, the Indicator Registry, Formula Playground, and Historical Event Lab provide a shared evidence-to-decision workflow.
+
+The detailed extension audit, Case Pack schema, provenance rules, and milestone evidence are maintained in [risk-research-lab-architecture.md](risk-research-lab-architecture.md).
 
 ## Logical Components
 
@@ -15,11 +17,15 @@ flowchart LR
     B --> F["Lesson Service"]
     B --> G["Memo Service"]
     B --> H["Audit Ledger"]
+    B --> N["Research Case Registry"]
+    B --> O["Indicator Registry"]
+    B --> P["Trusted Formula Engine"]
     D --> I["IMF DataMapper API"]
     C --> J["Sample CSV"]
     C --> K["Uploaded CSV"]
     C --> L["Generated IMF CSV"]
     E --> M["statsmodels / sklearn"]
+    N --> Q["Validated Case Packs"]
 ```
 
 ## Production Control Points
@@ -27,7 +33,7 @@ flowchart LR
 - Environment-driven settings live in `backend/app/config/settings.py`.
 - Optional API key authentication is enforced when `API_AUTH_REQUIRED=true`.
 - Authentication can run in `api_key`, `jwt`, `oidc_jwks`, or `api_key_or_jwt` mode. JWT mode validates HS256 gateway-signed bearer tokens; OIDC/JWKS mode validates RS256 tokens from a bank identity provider or API gateway.
-- RBAC enforcement protects sensitive dataset, model, audit, and governance endpoints using roles from token claims or trusted gateway headers.
+- RBAC enforcement protects sensitive dataset, model, audit, and governance endpoints using roles from validated token claims when API authentication is enabled. Header-based role simulation is restricted to unauthenticated development/test/local environments. API keys authenticate without granting application roles.
 - Security headers and request IDs are applied by `backend/app/middleware.py`.
 - Audit events are written as JSONL through `backend/app/services/audit_service.py`.
 - Audit events include a SHA-256 hash chain for tamper-evidence and can be verified through `/api/audit/verify`.

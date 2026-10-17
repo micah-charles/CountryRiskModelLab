@@ -14,5 +14,10 @@ def test_openapi_contract_contains_core_production_endpoints():
         "/api/model-governance/catalog",
         "/api/model-governance/approvals",
         "/api/audit/verify",
+        "/api/research-cases",
+        "/api/research-cases/import",
+        "/api/indicators",
+        "/api/formulas",
+        "/api/formulas/calculate",
     }
     assert required_paths.issubset(paths)

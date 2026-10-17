@@ -9,6 +9,8 @@ from app.main import app
 from app.services.audit_service import verify_audit_chain, write_audit_event
 from app.services.auth_service import make_hs256_jwt
 from app.services.model_governance_service import assert_model_use_allowed
+from app.services.rbac_service import roles_from_request
+from starlette.requests import Request
 
 
 def test_security_headers_and_request_id_are_set():
@@ -186,6 +188,8 @@ def test_model_governance_blocks_unapproved_intended_use():
 
 
 def test_model_approval_can_authorize_exception_use(monkeypatch, tmp_path):
+    monkeypatch.setenv("APP_ENV", "development")
+    monkeypatch.setenv("API_AUTH_REQUIRED", "false")
     monkeypatch.setenv("RBAC_ENFORCED", "true")
     monkeypatch.setenv("MODEL_APPROVALS_PATH", str(tmp_path / "model_approvals.json"))
     monkeypatch.setenv("AUDIT_LOG_PATH", str(tmp_path / "audit_events.jsonl"))
@@ -219,6 +223,92 @@ def test_model_approval_can_authorize_exception_use(monkeypatch, tmp_path):
 
     metadata = assert_model_use_allowed("regression", "external_publication", "ols_country_risk_learning_v1")
     assert metadata["approved_by_exception"] is True
+
+
+def test_rbac_ignores_forged_role_header_for_authenticated_jwt(monkeypatch, tmp_path):
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("API_AUTH_REQUIRED", "true")
+    monkeypatch.setenv("RBAC_ENFORCED", "true")
+    monkeypatch.setenv("AUTH_MODE", "jwt")
+    monkeypatch.setenv("JWT_HS256_SECRET", "test-shared-secret")
+    monkeypatch.setenv("AUDIT_LOG_PATH", str(tmp_path / "audit_events.jsonl"))
+    token = make_hs256_jwt({"sub": "viewer-001", "roles": ["viewer"], "exp": 4102444800}, "test-shared-secret")
+    client = TestClient(app)
+    response = client.post(
+        "/api/model-governance/approvals",
+        headers={"Authorization": f"Bearer {token}", "X-Actor-Roles": "economist"},
+        json={
+            "model_id": "ols_country_risk_learning_v1",
+            "intended_use": "external_publication",
+            "requester": "viewer-001",
+            "justification": "Forged-header regression test.",
+            "evidence_uri": "ticket://RBAC-TEST",
+        },
+    )
+    assert response.status_code == 403
+
+
+def test_api_key_authentication_does_not_grant_rbac_roles(monkeypatch, tmp_path):
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("API_AUTH_REQUIRED", "true")
+    monkeypatch.setenv("RBAC_ENFORCED", "true")
+    monkeypatch.setenv("AUTH_MODE", "api_key")
+    monkeypatch.setenv("API_KEY", "test-api-key")
+    monkeypatch.setenv("AUDIT_LOG_PATH", str(tmp_path / "audit_events.jsonl"))
+    response = TestClient(app).post(
+        "/api/model-governance/approvals",
+        headers={"X-API-Key": "test-api-key", "X-Actor-Roles": "economist"},
+        json={
+            "model_id": "ols_country_risk_learning_v1",
+            "intended_use": "external_publication",
+            "requester": "api-key-client",
+            "justification": "An API key is authentication only.",
+            "evidence_uri": "ticket://RBAC-TEST",
+        },
+    )
+    assert response.status_code == 403
+
+
+def test_role_claims_are_copied_and_malformed_values_grant_nothing(monkeypatch):
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("API_AUTH_REQUIRED", "true")
+    scope = {
+        "type": "http",
+        "method": "GET",
+        "path": "/",
+        "query_string": b"",
+        "headers": [(b"x-actor-roles", b"admin")],
+        "scheme": "http",
+        "server": ("test", 80),
+        "client": ("127.0.0.1", 12345),
+    }
+    request = Request(scope)
+    claims = {"roles": ["viewer", " economist "]}
+    request.state.auth_claims = claims
+    assert roles_from_request(request) == {"viewer", "economist"}
+    assert claims["roles"] == ["viewer", " economist "]
+
+    for invalid_claim in ({"admin": True}, 7, ["admin", 7]):
+        request.state.auth_claims = {"roles": invalid_claim}
+        assert roles_from_request(request) == set()
+
+
+def test_role_header_is_ignored_outside_development_even_if_auth_is_disabled(monkeypatch):
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("API_AUTH_REQUIRED", "false")
+    scope = {
+        "type": "http",
+        "method": "GET",
+        "path": "/",
+        "query_string": b"",
+        "headers": [(b"x-actor-roles", b"admin")],
+        "scheme": "http",
+        "server": ("test", 80),
+        "client": ("127.0.0.1", 12345),
+    }
+    request = Request(scope)
+    request.state.auth_claims = {}
+    assert roles_from_request(request) == set()
 
 
 def test_rbac_blocks_dataset_upload_without_data_role(monkeypatch, tmp_path):

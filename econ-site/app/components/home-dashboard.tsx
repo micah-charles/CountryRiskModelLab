@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowDownRight, ArrowRight, ArrowUpRight, ChartNoAxesCombined, Clock3, Database, FileChartColumn, LockKeyhole, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -25,7 +24,7 @@ export function HomeDashboard() {
         <p className="eyebrow"><span className="eyebrow-rule"/> ECONOMY &amp; RISK</p>
         <h1>Research, with the<br/><em>evidence in view.</em></h1>
         <p className="hero-intro">A private workspace for sovereign rates, country-risk indicators and market-event research. Every view carries its source and snapshot date.</p>
-        <div className="hero-actions"><Link className="button button-primary" href="/bonds">Explore bond yields <ArrowRight size={16}/></Link><Link className="text-link" href="/cases">Open research cases <ArrowUpRight size={16}/></Link></div>
+        <div className="hero-actions"><a className="button button-primary" href="/bonds">Explore bond yields <ArrowRight size={16}/></a><a className="text-link" href="/cases">Open research cases <ArrowUpRight size={16}/></a></div>
       </div>
       <div className="hero-illustration" aria-hidden="true">
         <div className="orb orb-one"/><div className="orb orb-two"/>
@@ -41,26 +40,26 @@ export function HomeDashboard() {
         <div className="hero-stamp"><Sparkles size={14}/><span>Curated, versioned, sourced</span></div>
       </div>
     </section>
-    <div className="section-kicker-row"><div><p className="eyebrow">YOUR WORKSPACE</p><h2>Research modules</h2></div><Link className="text-link" href="/history">Version history <ArrowRight size={15}/></Link></div>
+    <div className="section-kicker-row"><div><p className="eyebrow">YOUR WORKSPACE</p><h2>Research modules</h2></div><a className="text-link" href="/history">Version history <ArrowRight size={15}/></a></div>
     <section className="module-grid">
       <ModuleCard href="/bonds" icon={<ChartNoAxesCombined size={18}/>} eyebrow="RATES · DAILY" title="Government bond yields" text="Compare 10-year yields from six markets, with local-only import for data pending hosting permission." item={byKey.get("bond-yields")} loading={loading} accent="amber"/>
       <ModuleCard href="/country-risk" icon={<Database size={18}/>} eyebrow="COUNTRY RISK · SNAPSHOTS" title="Country-risk dashboard" text="Read versioned macro snapshots with source dates and missing values clearly marked." item={byKey.get("country-risk")} loading={loading} accent="green"/>
       <ModuleCard href="/cases" icon={<BookOpenIcon/>} eyebrow="MARKET EVENTS · CASE LIBRARY" title="Research cases" text="Follow source-linked event timelines, prediction reviews and consequence maps." item={byKey.get("research-cases")} loading={loading} accent="blue"/>
       <ModuleCard href="/demand" icon={<ArrowDownRight size={18}/>} eyebrow="HONG KONG · CHINA" title="Demand monitor" text="Explore company and industry evidence from the local analysis workflow." item={byKey.get("hk-demand")} loading={loading} accent="rose"/>
       <ModuleCard href="/indicators" icon={<Database size={18}/>} eyebrow="REFERENCE · CATALOG" title="Indicators & formulas" text="Browse the shared indicator library and trusted calculations." item={byKey.get("catalog")} loading={loading} accent="violet"/>
-      <Link href="/models" className="module-card pending-card"><div className="module-card-top"><span className="module-icon accent-slate"><LockKeyhole size={18}/></span><span className="status-chip pending-chip">Connection pending</span></div><p className="module-eyebrow">REGRESSION · FORECAST · VAR</p><h3>Model workspace</h3><p className="module-description">Python models remain in the local app. This Site is read-only for model results until a connection is approved.</p><div className="module-meta"><span>Local models</span><ArrowRight size={15}/></div></Link>
+      <a href="/models" className="module-card pending-card"><div className="module-card-top"><span className="module-icon accent-slate"><LockKeyhole size={18}/></span><span className="status-chip pending-chip">Connection pending</span></div><p className="module-eyebrow">REGRESSION · FORECAST · VAR</p><h3>Model workspace</h3><p className="module-description">Python models remain in the local app. This Site is read-only for model results until a connection is approved.</p><div className="module-meta"><span>Local models</span><ArrowRight size={15}/></div></a>
     </section>
-    <section className="bottom-strip"><div className="strip-icon"><Clock3 size={18}/></div><div><strong>{latest ? `Latest snapshot ${new Date(latest).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}` : "Waiting for the first snapshot"}</strong><p>{readyCount ? `${readyCount} versioned data ${readyCount === 1 ? "module" : "modules"} available` : "Run the private local updater to publish a reviewed snapshot. No source data is bundled with the Site code."}</p></div><div className="strip-right"><span className="strip-lock"><LockKeyhole size={14}/> Private cloud history</span><Link href="/history" className="button button-secondary">Open history <ArrowRight size={14}/></Link></div></section>
+    <section className="bottom-strip"><div className="strip-icon"><Clock3 size={18}/></div><div><strong>{latest ? `Latest snapshot ${new Date(latest).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}` : "Waiting for the first snapshot"}</strong><p>{readyCount ? `${readyCount} versioned data ${readyCount === 1 ? "module" : "modules"} available` : "Run the private local updater to publish a reviewed snapshot. No source data is bundled with the Site code."}</p></div><div className="strip-right"><span className="strip-lock"><LockKeyhole size={14}/> Private cloud history</span><a href="/history" className="button button-secondary">Open history <ArrowRight size={14}/></a></div></section>
   </div>;
 }
 
 function ModuleCard({ href, icon, eyebrow, title, text, item, loading, accent }: { href: string; icon: React.ReactNode; eyebrow: string; title: string; text: string; item?: CatalogItem; loading: boolean; accent: string }) {
   const sourceCount = Object.keys((item?.summary.sourceCounts as Record<string, number>) ?? {}).length;
-  return <Link href={href} className="module-card">
+  return <a href={href} className="module-card">
     <div className="module-card-top"><span className={`module-icon accent-${accent}`}>{icon}</span>{item ? <span className="status-chip ready-chip"><i/> Version {item.version}</span> : <span className={`status-chip ${loading ? "loading-chip" : "pending-chip"}`}>{loading ? "Loading" : "No snapshot yet"}</span>}</div>
     <p className="module-eyebrow">{eyebrow}</p><h3>{title}</h3><p className="module-description">{text}</p>
     <div className="module-meta"><span>{item ? `Updated ${new Date(item.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}${sourceCount ? ` · ${sourceCount} series` : ""}` : "View module details"}</span><ArrowRight size={15}/></div>
-  </Link>;
+  </a>;
 }
 
 function BookOpenIcon() {

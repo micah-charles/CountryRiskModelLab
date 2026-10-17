@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Activity, ArrowDownToLine, BookOpen, ChartNoAxesCombined, CircleHelp, Compass, Database, FileChartColumn, FunctionSquare, Gauge, Home, ListTree, Menu, Search, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
@@ -35,9 +34,9 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           {groups.map((group) => <div className="nav-group" key={group}>
             <p className="nav-heading">{group}</p>
             {navigation.filter((item) => item.group === group).map(({ href, label, icon: Icon }) => (
-              <Link key={href} href={href} onClick={() => setMenuOpen(false)} className={`nav-item ${current.href === href ? "is-active" : ""}`} aria-current={current.href === href ? "page" : undefined}>
+              <a key={href} href={href} onClick={() => setMenuOpen(false)} className={`nav-item ${current.href === href ? "is-active" : ""}`} aria-current={current.href === href ? "page" : undefined}>
                 <Icon size={17} strokeWidth={1.8} /><span>{label}</span>{label === "Model workspace" && <span className="nav-pending">Soon</span>}
-              </Link>
+              </a>
             ))}
           </div>)}
         </nav>
@@ -54,7 +53,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           <div className="topbar-right"><span className="secure-label"><ShieldCheck size={15} /> Private workspace</span><button className="icon-button" aria-label="Search is not available yet" title="Search is not available yet"><Search size={17} /></button><button className="avatar" aria-label="Signed-in owner">CT</button></div>
         </header>
         <main className="page-content">{children}</main>
-        <footer className="site-footer"><span>Source definitions vary across countries. Missing observations remain blank.</span><Link href="/help"><CircleHelp size={14} /> About the data</Link><Link href="/history"><ArrowDownToLine size={14} /> Versions & downloads</Link></footer>
+        <footer className="site-footer"><span>Source definitions vary across countries. Missing observations remain blank.</span><a href="/help"><CircleHelp size={14} /> About the data</a><a href="/history"><ArrowDownToLine size={14} /> Versions & downloads</a></footer>
       </div>
     </div>
   );

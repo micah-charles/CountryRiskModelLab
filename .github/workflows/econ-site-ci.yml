@@ -21,6 +21,8 @@ jobs:
         run: python3 -m unittest discover -s scripts/tests -v
       - name: Install Site dependencies
         run: npm ci --prefix econ-site
+      - name: Audit Site production dependencies
+        run: npm --prefix econ-site audit --omit=dev --audit-level=high
       - name: Prepare anonymous local build configuration
         run: cp econ-site/.openai/hosting.example.json econ-site/.openai/hosting.json
       - name: Snapshot and official-source parser tests

@@ -44,6 +44,8 @@ function summarizeBondSnapshot(value: unknown) {
     retrievedAt: snapshot.retrievedAt,
     historyComplete: snapshot.historyComplete,
     missingValuePolicy: snapshot.missingValuePolicy,
+    operatorSelectedPurpose: snapshot.operatorSelectedPurpose,
+    sourceRightsStatus: snapshot.sourceRightsStatus,
     restrictedCountries: Array.isArray(snapshot.restrictedCountries) ? snapshot.restrictedCountries : [],
     note: snapshot.note,
     sources: snapshot.sources,

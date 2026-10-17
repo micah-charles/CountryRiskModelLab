@@ -7,6 +7,10 @@ export type BondSnapshot = {
   retrievedAt: string;
   historyComplete: boolean;
   missingValuePolicy: "blank-no-fill";
+  operatorSelectedPurpose?: string | null;
+  sourceRightsStatus?: Partial<Record<CountryKey, string>>;
+  restrictedCountries?: string[];
+  note?: string;
   series: Partial<Record<CountryKey, YieldPoint[]>>;
   sources: Partial<Record<CountryKey, SourceDetails>>;
   sourceStatus?: Record<string, SourceStatus>;
@@ -20,6 +24,7 @@ export type SourceDetails = {
   unit: string;
   sourceUrl: string;
   reuse: string;
+  frequency?: string;
 };
 export type SourceStatus = {
   status: "current" | "stale" | "held" | "failed" | "local-only";
@@ -40,8 +45,8 @@ export const BOND_COUNTRIES: Array<{
 }> = [
   { key: "US", name: "United States", color: "#533620", definition: "10-year par yield from the Treasury's estimated daily par curve.", agency: "U.S. Department of the Treasury", sourceUrl: "https://home.treasury.gov/resource-center/data-chart-center/interest-rates", status: "hosted", rightsNote: "Numeric government publication hosted with attribution; this records the U.S. federal-government basis and does not claim a universal worldwide open-data licence." },
   { key: "UK", name: "United Kingdom", color: "#da8738", definition: "10-year nominal par yield from the Bank of England's fitted gilt curve.", agency: "Bank of England", sourceUrl: "https://www.bankofengland.co.uk/statistics/yield-curves", status: "hosted", rightsNote: "Open Government Licence terms apply subject to stated exclusions and third-party rights; credit the Bank of England." },
-  { key: "France", name: "France", color: "#203e5c", definition: "TEC10 constant-maturity index, calculated by Euronext using MTS France data.", agency: "Banque de France Webstat / Euronext", sourceUrl: "https://webstat.banque-france.fr/en/catalog/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA", status: "local-only", rightsNote: "Euronext terms restrict redistribution; hosted use requires confirmed permission." },
-  { key: "Italy", name: "Italy", color: "#55a6b9", definition: "Gross yield to maturity on the 10-year benchmark BTP; upstream providers are not itemized.", agency: "Banca d'Italia", sourceUrl: "https://www.bancaditalia.it/statistiche/tematiche/moneta-intermediari-finanza/mercati/index.html", status: "local-only", rightsNote: "Banca d'Italia terms require written permission for reproduction on information systems; BIVA upstream vendors are unspecified." },
+  { key: "France", name: "France", color: "#203e5c", definition: "TEC10 constant-maturity index, calculated by Euronext using MTS France data.", agency: "Banque de France Webstat / Euronext", sourceUrl: "https://webstat.banque-france.fr/en/catalog/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA", status: "local-only", rightsNote: "Operator-selected personal-interview purpose records intended use only. Euronext terms apply; written permission for this owner-only chart has not been verified. This is not a rights determination." },
+  { key: "Italy", name: "Italy", color: "#55a6b9", definition: "Gross yield to maturity on the 10-year benchmark BTP; upstream providers are not itemized.", agency: "Banca d'Italia", sourceUrl: "https://www.bancaditalia.it/statistiche/tematiche/moneta-intermediari-finanza/mercati/index.html", status: "local-only", rightsNote: "Operator-selected personal-interview purpose records intended use only. Banca d'Italia terms apply; written permission has not been verified. BIVA upstream vendors are unspecified; no claim is made that Bloomberg is absent." },
   { key: "Germany", name: "Germany", color: "#2d7953", definition: "Svensson term-structure yield at 10 years residual maturity.", agency: "Deutsche Bundesbank", sourceUrl: "https://www.bundesbank.de/en/statistics/money-and-capital-markets/securities-issues/no-05-yields-and-indices-on-german-securities", status: "hosted", rightsNote: "Bundesbank permits unchanged reproduction with attribution: Source: Deutsche Bundesbank." },
   { key: "Japan", name: "Japan", color: "#242424", definition: "10-year semiannual-compound constant-maturity JGB rate.", agency: "Ministry of Finance Japan", sourceUrl: "https://www.mof.go.jp/english/policy/jgbs/reference/interest_rate/qa.htm", status: "hosted", rightsNote: "Public Data License Version 1.0 applies unless otherwise indicated; cite MOF and identify changes." },
 ];

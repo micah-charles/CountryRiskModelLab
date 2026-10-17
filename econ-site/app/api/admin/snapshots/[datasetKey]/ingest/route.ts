@@ -73,7 +73,7 @@ export async function POST(request: Request, context: { params: Promise<{ datase
       const allowedPrefix = getHostedBondCountries().map((country) => prefixes[country]).filter(Boolean);
       const allowedName = new RegExp(`^(?:${allowedPrefix.join("|")})[a-z0-9._-]*\\.(?:csv|zip)$`, "i");
       if (datasetKey !== "bond-yields" || !allowedName.test(raw.name)) {
-        throw new Error("Raw source files are accepted only for the countries currently enabled by the server-side reuse policy.");
+        throw new Error("Raw source files are accepted only for countries enabled by the server-side presentation-purpose configuration.");
       }
       if (!/^[0-9a-f]{64}$/i.test(raw.sha256) || !/^[A-Za-z0-9+/]*={0,2}$/.test(raw.contentBase64)) {
         throw new Error(`Invalid raw snapshot encoding for ${raw.name}`);

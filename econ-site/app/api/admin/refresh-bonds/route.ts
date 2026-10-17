@@ -1,5 +1,5 @@
 import { POST as ingest } from "@/app/api/admin/snapshots/[datasetKey]/ingest/route";
-import { getCurrentVersion, getSnapshotBody, getHostedBondCountries, sha256 } from "@/lib/snapshots";
+import { getCurrentVersion, getSnapshotBody, getHostedBondCountries, getBondPresentationPurpose, sha256 } from "@/lib/snapshots";
 import { base64, fetchCountry, OFFICIAL_SOURCES } from "@/lib/official-bond-refresh";
 import type { Observation, OfficialCountry } from "@/lib/official-bond-refresh";
 
@@ -51,8 +51,13 @@ export async function POST(request: Request) {
         sourceStatus[country] = { status: "current", lastAttemptAt: attemptedAt, lastSuccessAt: attemptedAt, latestObservation: rows.at(-1)!.date, observationCount: rows.length };
       }
     }
+    const operatorSelectedPurpose = getBondPresentationPurpose();
     const restrictedCountries = ["France", "Italy"].filter((country) => !countries.includes(country as OfficialCountry));
-    const snapshot = { schemaVersion: 1, datasetKey: "bond-yields", periodStart: "2020-01-01", retrievedAt: attemptedAt, historyComplete: true, missingValuePolicy: "blank-no-fill", series, sources, sourceStatus, restrictedCountries, revisionWindow: "Previous two full calendar months plus current month; full-history downloads retained", note: "Country definitions differ; source gaps are never filled. Any country without confirmed cloud-reproduction scope stays browser-local." };
+    const rightsReview = operatorSelectedPurpose ? { France: "not-verified", Italy: "not-verified" } as const : undefined;
+    const note = operatorSelectedPurpose
+      ? "Operator-selected purpose: personal interview. This records intended use only; it is not a rights determination or verified permission. Euronext and Banca d'Italia terms apply; written permission has not been verified. Italy BMK0200 upstream vendors are not itemized. The interactive Site view loads prepared chart images and source summaries; owner-only CSV, JSON, and Excel downloads read the selected immutable stored snapshot."
+      : "Country definitions differ; source gaps are never filled. France and Italy remain outside the configured Site snapshot until an explicit presentation purpose is selected.";
+    const snapshot = { schemaVersion: 1, datasetKey: "bond-yields", periodStart: "2020-01-01", retrievedAt: attemptedAt, historyComplete: true, missingValuePolicy: "blank-no-fill", series, sources, sourceStatus, restrictedCountries, operatorSelectedPurpose, sourceRightsStatus: rightsReview, revisionWindow: "Previous two full calendar months plus current month; full-history downloads retained", note };
     const response = await ingest(new Request(new URL("/api/admin/snapshots/bond-yields/ingest", request.url), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ expectedVersion: current?.version ?? null, snapshot, rawSnapshots, sourceStatus }) }), { params: Promise.resolve({ datasetKey: "bond-yields" }) });
     const result = await response.json() as Record<string, unknown>;
     return Response.json({ ...result, failures, refreshedAt: attemptedAt }, { status: response.status, headers: { "Cache-Control": "no-store" } });

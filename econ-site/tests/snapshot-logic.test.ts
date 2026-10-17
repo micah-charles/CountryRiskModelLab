@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { assertNoHistoryLoss, collectChanges, flattenSnapshot, validateSnapshot } from "../lib/snapshot-logic.ts";
+import { ALL_BOND_COUNTRIES, PERSONAL_INTERVIEW_PURPOSE, assertNoHistoryLoss, collectChanges, flattenSnapshot, hostedBondCountriesForPurpose, validateSnapshot } from "../lib/snapshot-logic.ts";
 
 function bondSnapshot(values: Record<string, Array<{ date: string; value: number | null }>> = {}) {
   const countries = ["US", "UK", "Germany", "Japan"];
@@ -86,6 +86,25 @@ test("bond validation rejects invalid, duplicate, unsorted, or incomplete series
   const incomplete = bondSnapshot();
   delete incomplete.series.Japan;
   assert.throws(() => validateSnapshot("bond-yields", incomplete), /coverage is incomplete/);
+});
+
+test("only the configured personal-interview purpose enables France and Italy", () => {
+  assert.deepEqual(hostedBondCountriesForPurpose(undefined), ["US", "UK", "Germany", "Japan"]);
+  assert.deepEqual(hostedBondCountriesForPurpose("fr-it-private"), ["US", "UK", "Germany", "Japan"]);
+  assert.deepEqual(hostedBondCountriesForPurpose(PERSONAL_INTERVIEW_PURPOSE), ALL_BOND_COUNTRIES);
+
+  const sixCountries = [...ALL_BOND_COUNTRIES];
+  const snapshot = {
+    ...bondSnapshot(),
+    series: Object.fromEntries(sixCountries.map((country) => [country, [{ date: "2020-01-02", value: 1.2 }]])),
+    sources: Object.fromEntries(sixCountries.map((country) => [country, { sourceUrl: `https://example.test/${country}`, seriesId: country }])),
+    sourceStatus: Object.fromEntries(sixCountries.map((country) => [country, { status: "current" }])),
+    operatorSelectedPurpose: PERSONAL_INTERVIEW_PURPOSE,
+    sourceRightsStatus: { France: "not-verified", Italy: "not-verified" },
+  };
+  assert.doesNotThrow(() => validateSnapshot("bond-yields", snapshot, sixCountries));
+  assert.throws(() => validateSnapshot("bond-yields", { ...snapshot, operatorSelectedPurpose: null }, sixCountries), /operator-selected purpose/);
+  assert.throws(() => validateSnapshot("bond-yields", { ...snapshot, sourceRightsStatus: { France: "verified", Italy: "not-verified" } }, sixCountries), /rights status must remain explicitly not verified/);
 });
 
 test("a revised snapshot cannot silently drop historical observations", () => {

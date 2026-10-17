@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import type { CountryKey } from "@/app/data/catalog";
-import { ALL_BOND_COUNTRIES, DATASET_KEYS, DEFAULT_HOSTED_BOND_COUNTRIES, validateSnapshot as validateSnapshotCore } from "@/lib/snapshot-logic";
+import { DATASET_KEYS, PERSONAL_INTERVIEW_PURPOSE, hostedBondCountriesForPurpose, validateSnapshot as validateSnapshotCore } from "@/lib/snapshot-logic";
 import type { SnapshotObject } from "@/lib/snapshot-logic";
 
 export { assertNoHistoryLoss, collectChanges } from "@/lib/snapshot-logic";
@@ -56,11 +56,17 @@ export function isSnapshotDataset(value: string): value is SnapshotDataset {
   return (SNAPSHOT_DATASETS as readonly string[]).includes(value);
 }
 
-/** Enable the extended list only after written redistribution scope for France/Italy is confirmed. */
+type BondPurposeEnv = { BOND_PRESENTATION_PURPOSE?: string };
+
+/** The purpose setting records operator intent; it does not assert permission or clear provider terms. */
+export function getBondPresentationPurpose() {
+  return (env as typeof env & BondPurposeEnv).BOND_PRESENTATION_PURPOSE === PERSONAL_INTERVIEW_PURPOSE
+    ? PERSONAL_INTERVIEW_PURPOSE
+    : null;
+}
+
 export function getHostedBondCountries(): CountryKey[] {
-  return env.BOND_EXTENDED_CLOUD_RIGHTS === "fr-it-private"
-    ? [...ALL_BOND_COUNTRIES] as CountryKey[]
-    : [...DEFAULT_HOSTED_BOND_COUNTRIES] as CountryKey[];
+  return [...hostedBondCountriesForPurpose(getBondPresentationPurpose())] as CountryKey[];
 }
 
 export function validateSnapshot(datasetKey: SnapshotDataset, value: unknown): asserts value is JsonObject {

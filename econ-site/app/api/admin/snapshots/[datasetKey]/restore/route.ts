@@ -1,8 +1,9 @@
-import { collectChanges, getCurrentVersion, getDatabase, getSnapshotBody, getVersion, getVersionManifest, isSnapshotDataset, sha256, validateSnapshot } from "@/lib/snapshots";
+import { collectChanges, getCurrentVersion, getDatabase, getSnapshotBody, getVersion, getVersionManifest, isSnapshotDataset, sha256 } from "@/lib/snapshots";
 import { getBucket } from "@/lib/snapshots";
 import { renderBondChartAssets } from "@/lib/bond-chart-assets";
 import type { BondSnapshot } from "@/app/data/catalog";
 import { isLocalBondDataAccessEnabled } from "@/lib/site-config";
+import { ALL_BOND_COUNTRIES, validateSnapshot as validateSnapshotCore } from "@/lib/snapshot-logic";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +40,17 @@ export async function POST(request: Request, context: { params: Promise<{ datase
     if (!source) return Response.json({ error: "Version not found." }, { status: 404 });
     const sourceManifest = getVersionManifest(source);
     const restoredBody = await getSnapshotBody(source.object_key);
-    if (datasetKey === "bond-yields") validateSnapshot(datasetKey, restoredBody);
+    if (datasetKey === "bond-yields") {
+      const bondSnapshot = restoredBody as BondSnapshot;
+      const historicalCountries = Object.keys(bondSnapshot.series ?? {});
+      if (!historicalCountries.length || historicalCountries.some((country) => !(ALL_BOND_COUNTRIES as readonly string[]).includes(country))) {
+        throw new Error("Historical bond snapshot has unsupported country coverage.");
+      }
+      // A restore replays the immutable snapshot as originally published. This
+      // permits reading/restoring pre-expansion four-country versions while
+      // ordinary new ingests still require the currently configured six-country set.
+      validateSnapshotCore("bond-yields", restoredBody, historicalCountries);
+    }
     const currentBody = current ? await getSnapshotBody(current.object_key) : null;
     const changeSet = collectChanges(datasetKey, currentBody, restoredBody);
     const version = (currentVersion ?? 0) + 1;

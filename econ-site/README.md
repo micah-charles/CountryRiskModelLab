@@ -5,9 +5,9 @@ An owner-private Sites dashboard for versioned economic and market research. The
 ## Data and privacy boundaries
 
 - The GitHub repository is public. Never commit snapshots, raw exports, private reports, chart payloads, credentials or `.openai/hosting.json` identity changes. Runtime payloads are confined to ignored `private-data/`; private D1/R2 holds published versions.
-- Production bond pages receive prepared SVG chart images and country/source summaries. Daily observations, raw-source downloads, row-level diffs and workbook exports are available only in the local preview. The five hosted chart presets are last 3 years, last year, year to date, last 5 years and 2020–present.
+- The owner-private production bond page receives prepared SVG chart images and country/source summaries. Its explicit download controls stream CSV, JSON or Excel from the selected immutable private snapshot version, for the selected chart preset or the complete 2020-to-latest history. Downloads never refresh data or change a snapshot head. The Excel workbook includes yield rows, source notes and snapshot provenance; CSV begins with `#` provenance/source lines before its date header; JSON includes the same metadata and the series.
 - Bond SVGs are generated during validated ingest and restore before the D1 head moves. Immutable object keys include snapshot version and SHA-256, so a failed or concurrent write cannot replace the image associated with the current version.
-- Hosted bond coverage defaults to US, UK, Germany and Japan. France TEC10 and Italy BMK0200 stay out of cloud snapshots until their exact private-hosting and source-input rights are confirmed. Private audience does not by itself grant data-reuse permission. The local import workflow remains available.
+- Hosted bond coverage defaults to US, UK, Germany and Japan. The private Site can be explicitly configured with `BOND_PRESENTATION_PURPOSE=personal-interview` to include France TEC10 and Italy BMK0200 for the operator-stated interview purpose. This records intended use only: Euronext and Banca d'Italia terms apply, written permission has not been verified, and Italy BMK0200 upstream vendors are not itemized. Private audience or personal-use purpose does not itself grant data-reuse permission.
 - The Site is owner-private and stores data in private D1/R2. Read APIs rely on that Site audience boundary; write APIs check request origin. Do not change the hosting audience to public or workspace-wide without reviewing these assumptions.
 - Missing values stay null. Refresh validation rejects incomplete history, invalid/duplicate/out-of-order dates, and history loss. A failed source keeps its last-good data and is marked stale; first publication cannot promote stale data.
 
@@ -19,7 +19,7 @@ The official bond refresher is the Site's private admin route `/api/admin/refres
 
 ## Local bond workspace
 
-The loopback Vite preview sets the server-side `BOND_LOCAL_DATA_ACCESS` runtime flag. `/bonds` then uses the full-series local dashboard for local CSV/JSON import, arbitrary dates, Excel and chart exports. The production Site does not set this flag and renders prepared preset images instead. The API exposes full bond rows/raw files only when this local runtime flag is true; do not set it on the hosted Site.
+The loopback Vite preview sets the server-side `BOND_LOCAL_DATA_ACCESS` runtime flag. `/bonds` then uses the full-series local dashboard for local CSV/JSON import, arbitrary dates, Excel and chart exports. The production Site does not set this flag: normal page/API reads remain summaries and prepared images. Its separate owner-private export endpoint streams only processed observations from the requested immutable version; it does not expose raw provider files. Site read routes rely on the current owner-only audience boundary, so do not change that audience without reviewing data exposure.
 
 ## Verification
 

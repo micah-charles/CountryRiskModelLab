@@ -4,7 +4,12 @@ export type SnapshotObject = Record<string, unknown>;
 
 export const DEFAULT_HOSTED_BOND_COUNTRIES = ["US", "UK", "Germany", "Japan"] as const;
 export const ALL_BOND_COUNTRIES = ["US", "UK", "France", "Italy", "Germany", "Japan"] as const;
+export const PERSONAL_INTERVIEW_PURPOSE = "personal-interview" as const;
 const MAX_SNAPSHOT_BYTES = 3 * 1024 * 1024;
+
+export function hostedBondCountriesForPurpose(purpose: unknown): readonly string[] {
+  return purpose === PERSONAL_INTERVIEW_PURPOSE ? ALL_BOND_COUNTRIES : DEFAULT_HOSTED_BOND_COUNTRIES;
+}
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -124,6 +129,16 @@ export function validateSnapshot(datasetKey: DatasetKey, value: unknown, allowed
     const missing = allowedBondCountries.filter((country) => !countries.includes(country));
     const extra = countries.filter((country) => !allowedBondCountries.includes(country));
     if (missing.length || extra.length) throw new Error(`Bond snapshot country coverage is incomplete (missing: ${missing.join(", ") || "none"}; unsupported: ${extra.join(", ") || "none"}).`);
+    if (allowedBondCountries.includes("France") || allowedBondCountries.includes("Italy")) {
+      if (snapshot.operatorSelectedPurpose !== PERSONAL_INTERVIEW_PURPOSE) {
+        throw new Error("France and Italy snapshots must record the configured operator-selected purpose.");
+      }
+      if (!isObject(snapshot.sourceRightsStatus)
+        || snapshot.sourceRightsStatus.France !== "not-verified"
+        || snapshot.sourceRightsStatus.Italy !== "not-verified") {
+        throw new Error("France and Italy source rights status must remain explicitly not verified.");
+      }
+    }
     if (!isObject(snapshot.sources)) throw new Error("bond-yields snapshot must include source definitions");
     if (!isObject(snapshot.sourceStatus)) throw new Error("bond-yields snapshot must include per-source status");
     for (const country of allowedBondCountries) {
